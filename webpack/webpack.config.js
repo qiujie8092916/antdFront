@@ -181,7 +181,7 @@ module.exports = function () {
             },
             sourceMap: isEnvDevelopment,
           },
-        },
+        }
       ].filter(Boolean);
       if (loader) {
         loaders.push(
@@ -221,7 +221,7 @@ module.exports = function () {
     bail: isEnvProduction,
     devtool: isEnvProduction ? false : "cheap-module-source-map", // "eval-cheap-module-source-map"
 
-    entry: paths.appIndexJs,
+    entry: paths.appIndexTs,
 
     output: {
       // The build folder.
@@ -424,6 +424,11 @@ module.exports = function () {
         //     fullySpecified: false,
         //   },
         // },
+        // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+        {
+          test: /\.tsx?$/,
+          loader: require.resolve("ts-loader"),
+        },
         {
           test: /\.(js|mjs|jsx|ts|tsx)$/,
           // test: /\.(j|t)sx?$/,
@@ -474,12 +479,12 @@ module.exports = function () {
             inputSourceMap: isEnvDevelopment,
           },
         },
-        // {
-        //   exclude: [/node_modules/],
-        //   test: /\.(ts|js)x?$/,
-        //   use: ['source-map-loader'],
-        //   enforce: 'pre',
-        // },
+        {
+          exclude: [/node_modules/],
+          test: /\.(js)x?$/,
+          use: ['source-map-loader'],
+          enforce: 'pre',
+        },
         getStyleLoaders(/\.(css)(\?.*)?$/),
         getStyleLoaders(/\.(less)(\?.*)?$/, "less-loader", {
           sourceMap: isEnvDevelopment,
