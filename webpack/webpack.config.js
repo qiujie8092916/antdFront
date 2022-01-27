@@ -181,7 +181,7 @@ module.exports = function () {
             },
             sourceMap: isEnvDevelopment,
           },
-        },
+        }
       ].filter(Boolean);
       if (loader) {
         loaders.push(
@@ -221,7 +221,7 @@ module.exports = function () {
     bail: isEnvProduction,
     devtool: isEnvProduction ? false : "cheap-module-source-map", // "eval-cheap-module-source-map"
 
-    entry: paths.appIndexJs,
+    entry: paths.appIndexTs,
 
     output: {
       // The build folder.
@@ -414,7 +414,12 @@ module.exports = function () {
       strictExportPresence: true,
       rules: [
         // Disable require.ensure as it's not a standard language feature.
-        { parser: { requireEnsure: false } },
+        {
+          test: /\.[cm]?js$/,
+          parser: {
+            requireEnsure: false
+          }
+        },
         // resolve : https://github.com/webpack/webpack/issues/11467 ^5.0.0-bata.30
         // {
         //   oneOf: [
@@ -424,10 +429,24 @@ module.exports = function () {
         //     fullySpecified: false,
         //   },
         // },
+        // {
+        //   test: /\.(ts|tsx)$/,
+        //   exclude: /node_modules/,
+        //   use: [{
+        //     loader: 'ts-loader',
+        //   }]
+        // },
+        // // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+        // {
+        //   enforce: "pre",
+        //   test: /\.js$/,
+        //   exclude: /node_modules/,
+        //   loader: "source-map-loader"
+        // },
         {
           test: /\.(js|mjs|jsx|ts|tsx)$/,
           // test: /\.(j|t)sx?$/,
-          // exclude: /(node_modules|bower_components)/,
+          exclude: /(node_modules|bower_components)/,
           include: paths.appSrc,
           // resolve:{
           //   fullySpecified: false
@@ -474,12 +493,6 @@ module.exports = function () {
             inputSourceMap: isEnvDevelopment,
           },
         },
-        // {
-        //   exclude: [/node_modules/],
-        //   test: /\.(ts|js)x?$/,
-        //   use: ['source-map-loader'],
-        //   enforce: 'pre',
-        // },
         getStyleLoaders(/\.(css)(\?.*)?$/),
         getStyleLoaders(/\.(less)(\?.*)?$/, "less-loader", {
           sourceMap: isEnvDevelopment,
