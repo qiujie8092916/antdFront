@@ -43,6 +43,7 @@ const BasicLayout: React.FC = () => {
   const navigate = useNavigate();
 
   // const orgRoute = useRecoilValue(dynamicRouteAtom);
+
   const route = useRecoilValue(transDynamicRouteAtom);
   // 手工转换下
   // transDynamicConfigAtom 貌似无法触发prolayout 的menu 更新，深表痛心。
@@ -51,7 +52,6 @@ const BasicLayout: React.FC = () => {
   //   [orgRoute, locale],
   // );
 
-  console.log(route);
   // 之所以要喂给单独深拷贝喂，因为 https://github.com/umijs/route-utils/pull/10 它好像挺倔，这么反人类的 底裤操作，居然不纠正...
   const feedToProlayoutRoute = useCreation(() => _.cloneDeep(route), [locale]);
 
