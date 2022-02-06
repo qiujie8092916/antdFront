@@ -14,13 +14,10 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const SafePostCssParser = require("postcss-safe-parser");
-const postcssNormalize = require("postcss-normalize");
 // const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const ESLintPlugin = require("eslint-webpack-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 
@@ -32,19 +29,18 @@ const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpack
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
-const getCacheIdentifier = require("react-dev-utils/getCacheIdentifier");
 
 const createEnvironmentHash = require("./createEnvironmentHash");
 // const ignoredFiles = require('react-dev-utils/ignoredFiles');
 
 // const DashboardPlugin = require('webpack-dashboard/plugin');
 
-const webpackDevClientEntry = require.resolve(
-  "react-dev-utils/webpackHotDevClient",
-);
-const reactRefreshOverlayEntry = require.resolve(
-  "react-dev-utils/refreshOverlayInterop",
-);
+// const webpackDevClientEntry = require.resolve(
+//   "react-dev-utils/webpackHotDevClient",
+// );
+// const reactRefreshOverlayEntry = require.resolve(
+//   "react-dev-utils/refreshOverlayInterop",
+// );
 
 // resolve css less scss support module import
 const paths = require("./paths");
@@ -59,9 +55,7 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
 // makes for a smoother build process.
 const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== "false";
 
-const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === "true";
-
-const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || "10000",);
+const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || "10000", 10);
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
@@ -106,7 +100,7 @@ module.exports = function () {
   const isEnvProductionProfile =
     isEnvProduction && process.argv.includes("--profile");
 
-  const shouldUseReactRefresh = env.raw.FAST_REFRESH;
+  // const shouldUseReactRefresh = env.raw.FAST_REFRESH;
 
   // common function to get style loaders
 
@@ -908,24 +902,6 @@ module.exports = function () {
             infrastructure: "silent",
           },
         }),
-      // !disableESLintPlugin &&
-      //   new ESLintPlugin({
-      //     // Plugin options
-      //     extensions: ["js", "mjs", "jsx", "ts", "tsx"],
-      //     formatter: require.resolve("react-dev-utils/eslintFormatter"),
-      //     eslintPath: require.resolve("eslint"),
-      //     failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
-      //     context: paths.appSrc,
-      //     cache: true,
-      //     cacheLocation: path.resolve(
-      //       paths.appNodeModules,
-      //       ".cache/.eslintcache",
-      //     ),
-      //     // ESLint class options
-      //     cwd: paths.appPath,
-      //     resolvePluginsRelativeTo: __dirname,
-
-      //   }),
     ].filter(Boolean),
 
     // Turn off performance processing because we utilize

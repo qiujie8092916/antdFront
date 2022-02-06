@@ -1,14 +1,12 @@
-/*eslint-disable*/ module.exports = {
+module.exports = {
   messages: {
     'APP/账户注册': 'APP/Account Registration',
-    'Antd Front 遵循 Ant Design 设计规范':
-      'Antd Front follows Ant Design design specifications',
+    'Antd Front 遵循 Ant Design 设计规范': 'Antd Front follows Ant Design design specifications',
     vue2测试: 'vue2-test',
     其他登陆方式: 'Other login',
     '剩余%s秒': '%s seconds remaining',
     功能: 'function',
-    '密码需6位以上，区分大小写':
-      'Password must be more than 6 digits, case sensitive',
+    '密码需6位以上，区分大小写': 'Password must be more than 6 digits, case sensitive',
     '密码：any': 'Password: any',
     '密码：任意': 'Password: any',
     应用注册: 'App registration ',
@@ -17,8 +15,7 @@
     手机号: 'Mobile Number',
     手机号格式错误: 'Mobile Number Format Error',
     手机号登陆: 'Mobile Number Login',
-    "欢迎使用AntdFront's multitabs template":
-      "Welcome to AntdFront's multitabs template",
+    "欢迎使用AntdFront's multitabs template": "Welcome to AntdFront's multitabs template",
     欢迎菜单: 'welcome',
     测试1: 'test1',
     测试2: 'test2',
@@ -36,13 +33,12 @@
     请输入验证码: 'Please enter the verification code',
     账号密码登陆: 'Account password login',
     账户名: 'Account name',
-    '账户或密码错误（admin/ant.design)':
-      'Account or password error (admin/ ant.design)',
+    '账户或密码错误（admin/ant.design)': 'Account or password error (admin/ ant.design)',
     输入正确的邮箱地址: 'Enter the correct email address',
     返回登录: 'Return to login',
     返回首页: 'Return to home page',
     邮箱: 'Email',
     重新获取: 'Re-acquire',
-    验证码错误: 'Verification code error',
-  },
+    验证码错误: 'Verification code error'
+  }
 };
