@@ -1,6 +1,5 @@
 import { atom, selector } from 'recoil';
 
-import { curLocaleLoadAtom } from '@/atoms/locale';
 import {
   dynamicConfig,
   generateRouteWithMenuTypes,
@@ -42,10 +41,9 @@ export const dynamicRouteAtom = selector({
 // 翻译name，方便后续使用
 export const transDynamicRouteAtom = selector({
   key: 'transDynamicRouteAtom',
-  get: ({ get }) => {
-    // 依赖 curLocaleLoadAtom,切换语言需要翻译左侧菜单
-    get(curLocaleLoadAtom);
-    return translateNameProperty(get(dynamicRouteAtom) ?? []);
+  get: async ({ get }) => {
+    console.log('transDynamicRouteAtom');
+    return translateNameProperty(get(dynamicRouteAtom) ?? [])
   }
 });
 
