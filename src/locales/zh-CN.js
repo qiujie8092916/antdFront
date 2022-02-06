@@ -1,8 +1,7 @@
-/*eslint-disable*/ module.exports = {
+module.exports = {
   messages: {
     'APP/账户注册': 'APP/账户注册',
-    'Antd Front 遵循 Ant Design 设计规范':
-      'Antd Front 遵循 Ant Design 设计规范',
+    'Antd Front 遵循 Ant Design 设计规范': 'Antd Front 遵循 Ant Design 设计规范',
     vue2测试: 'vue2测试',
     其他登陆方式: '其他登陆方式',
     '剩余%s秒': '剩余%s秒',
@@ -16,8 +15,7 @@
     手机号: '手机号',
     手机号格式错误: '手机号格式错误',
     手机号登陆: '手机号登陆',
-    "欢迎使用AntdFront's multitabs template":
-      "欢迎使用AntdFront's multitabs template",
+    "欢迎使用AntdFront's multitabs template": "欢迎使用AntdFront's multitabs template",
     欢迎菜单: '欢迎菜单',
     测试1: '测试1',
     测试2: '测试2',
@@ -41,6 +39,6 @@
     返回首页: '返回首页',
     邮箱: '邮箱',
     重新获取: '重新获取',
-    验证码错误: '验证码错误',
-  },
+    验证码错误: '验证码错误'
+  }
 };
