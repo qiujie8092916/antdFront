@@ -1,18 +1,16 @@
-import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
+import ProLayout from '@ant-design/pro-layout';
 import defaultSettings from '@ant-design/pro-layout/es/defaultSettings';
-import { useCreation, useSafeState } from 'ahooks';
+import { useCreation } from 'ahooks';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
-import React, { Suspense } from 'react';
-import { matchRoutes, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import logo from '@/assets/logo.svg';
 import { curLangAtom } from '@/atoms/locale';
 import { dynamicRouteAtom } from '@/atoms/route';
-import { tabsModelAtom } from '@/atoms/tabsModel';
 import { RightContent } from '@/components/GlobalHeader';
-import PageLoading from '@/components/PageLoading';
 import TabRoute from '@/components/TabRoute';
 import { DynamicRouteType } from '@/config/routes';
 import { translateNameProperty } from '@/utils/route-utils';
@@ -33,13 +31,7 @@ const pickRoutes = memoized((routes: DynamicRouteType[], pathname: string) => {
 
 const BasicLayout: React.FC = () => {
   const location = useLocation();
-  const [settings, setSetting] = useSafeState<any>({
-    ...defaultSettings,
-    fixSiderbar: true,
-    fixedHeader: true
-  });
   const curLang = useRecoilValue(curLangAtom);
-  const tabsModel = useRecoilValue(tabsModelAtom);
   const dynamicRoute = useRecoilValue(dynamicRouteAtom);
 
   const navigate = useNavigate();
@@ -95,23 +87,15 @@ const BasicLayout: React.FC = () => {
           </div>
         )}
         rightContentRender={() => <RightContent />}
-        {...settings}>
+        {...{
+          ...defaultSettings,
+          fixSiderbar: true,
+          fixedHeader: true
+        }}>
         {/* <PageContainer> */}
-        {tabsModel ? (
-          <TabRoute routeConfig={routeConfig} matchPath={matchPath} />
-        ) : (
-          <Suspense fallback={<PageLoading />}>
-            <Outlet />
-          </Suspense>
-        )}
+        <TabRoute routeConfig={routeConfig} matchPath={matchPath} />
         {/* </PageContainer> */}
       </ProLayout>
-      <SettingDrawer
-        getContainer={() => document.getElementById('prolayout')}
-        settings={settings}
-        disableUrlParams={true}
-        onSettingChange={(changeSetting) => setSetting(changeSetting)}
-      />
     </div>
   );
 };
