@@ -9,8 +9,11 @@ import type { Location } from 'react-router-dom';
 // import { useWhyDidYouUpdate } from 'ahooks';
 import { generatePath, useLocation, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
+import RightContent from '@/components/PageContainer/RightContent';
 import PageLoading from '@/components/PageLoading';
 import { DynamicRouteType } from '@/config/routes';
+
+import styles from './index.less';
 
 interface TabObjectType {
   name: string;
@@ -110,13 +113,20 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
     });
   });
 
+  const operations = React.useMemo(
+    () => ({
+      right: <RightContent />
+    }),
+    []
+  );
+
   // useWhyDidYouUpdate('useWhyDidYouUpdateTabRoutes', { ...props, ele,location,tabList });
   return (
     <Tabs
-      // className={styles.tabs}
+      className={styles.tabs}
       activeKey={generTabKey(location, matchPath)}
       onChange={(key) => selectTab(key)}
-      // tabBarExtraContent={operations}
+      tabBarExtraContent={operations}
       tabBarStyle={{ background: '#fff' }}
       tabPosition='top'
       animated

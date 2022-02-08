@@ -10,7 +10,6 @@ import { useRecoilValue } from 'recoil';
 import logo from '@/assets/logo.svg';
 import { curLangAtom } from '@/atoms/locale';
 import { dynamicRouteAtom } from '@/atoms/route';
-import { RightContent } from '@/components/GlobalHeader';
 import TabRoute from '@/components/TabRoute';
 import { DynamicRouteType } from '@/config/routes';
 import { translateNameProperty } from '@/utils/route-utils';
@@ -86,11 +85,14 @@ const BasicLayout: React.FC = () => {
             <h1>Antd Front</h1>
           </div>
         )}
-        rightContentRender={() => <RightContent />}
+        headerRender={false}
         {...{
           ...defaultSettings,
           fixSiderbar: true,
           fixedHeader: true
+        }}
+        contentStyle={{
+          margin: 0
         }}>
         {/* <PageContainer> */}
         <TabRoute routeConfig={routeConfig} matchPath={matchPath} />

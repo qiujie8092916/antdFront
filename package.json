@@ -15,7 +15,7 @@
     "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx",
     "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "lint:prettier": "prettier --check \"**/*\" --end-of-line auto",
-    "lint:style": "stylelint \"src/**/*.less\" --syntax less",
+    "lint:style": "stylelint \"src/**/*.less\" --fix",
     "prettier": "prettier -c --write \"**/*\""
   },
   "browserslist": [
@@ -29,7 +29,7 @@
     }
   },
   "lint-staged": {
-    "**/*.less": "stylelint --syntax less",
+    "**/*.less": "stylelint --fix",
     "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
     "**/*.{js,jsx,tsx,ts,less,md,json}": [
       "prettier --write"
@@ -141,7 +141,7 @@
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.0",
     "style-loader": "^3.3.1",
-    "stylelint": "^14.1.0",
+    "stylelint": "^14.3.0",
     "stylelint-config-recommended": "^6.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",

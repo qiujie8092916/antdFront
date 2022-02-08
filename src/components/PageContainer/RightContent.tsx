@@ -5,7 +5,7 @@ import SelectLang from '@/components/SelectLang';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 
-const GlobalHeaderRight: React.FC = () => {
+const RightContent: React.FC = () => {
   const className = `${styles.right}  ${styles.dark}`;
 
   return (
@@ -16,4 +16,4 @@ const GlobalHeaderRight: React.FC = () => {
   );
 };
 
-export default GlobalHeaderRight;
+export default RightContent;

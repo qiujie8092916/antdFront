@@ -47,7 +47,7 @@ const SelectLang: React.FC<Record<string, any>> = (props) => {
           <span role='img' aria-label={locales[lang].name}>
             {locales[lang].icon || '🌐'}
           </span>
-          {locales[lang].name}
+          {` ${locales[lang].name}`}
         </Menu.Item>
       ))}
     </Menu>
