@@ -4,8 +4,13 @@
   "description": "Antdfront is a set of multi tab experimental react microfrontend template",
   "main": "webpack.config.js",
   "scripts": {
+    "start": "npm run start:dev",
     "build": "npx cross-env NODE_ENV=production  webpack --mode=production  --config ./webpack/webpack.config.js",
     "dev": "npx cross-env NODE_ENV=development  webpack serve  --mode=development --config ./webpack/webpack.config.js",
+    "start:dev": "cross-env ENV_NAME=dev MOCK=none && npm run dev",
+    "start:fat": "cross-env ENV_NAME=fat MOCK=none && npm run dev",
+    "start:uat": "cross-env ENV_NAME=uat && npm run dev",
+    "start:pro": "cross-env ENV_NAME=pro && npm run dev",
     "test": "jest",
     "extract": "lingui extract",
     "compile": "lingui compile",
@@ -16,7 +21,8 @@
     "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "lint:prettier": "prettier --check \"**/*\" --end-of-line auto",
     "lint:style": "stylelint \"src/**/*.less\" --fix",
-    "prettier": "prettier -c --write \"**/*\""
+    "prettier": "prettier -c --write \"**/*\"",
+    "prepare-commit-msg": "prepare-commit-msg"
   },
   "browserslist": [
     "last 2 versions",
@@ -25,7 +31,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "post-commit": "prepare-commit-msg"
     }
   },
   "lint-staged": {
@@ -89,6 +95,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
     "@umijs/babel-plugin-auto-css-modules": "^3.5.20",
+    "@woulsl-tools/commitizen": "^1.0.5",
     "@woulsl/fabric": "^1.1.13",
     "babel-loader": "^8.2.3",
     "babel-plugin-dynamic-import-node": "^2.3.3",
@@ -170,6 +177,8 @@
     "@koale/useworker": "^4.0.2",
     "@lingui/core": "^3.12.1",
     "@lingui/react": "^3.13.0",
+    "@woulsl/request": "^3.1.1",
+    "@woulsl/storage": "^1.1.0",
     "ahooks": "^3.0.5",
     "antd": "^4.17.3",
     "classnames": "^2.3.1",
