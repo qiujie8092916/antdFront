@@ -7,10 +7,10 @@
     "start": "npm run start:dev",
     "build": "npx cross-env NODE_ENV=production  webpack --mode=production  --config ./webpack/webpack.config.js",
     "dev": "npx cross-env NODE_ENV=development  webpack serve  --mode=development --config ./webpack/webpack.config.js",
-    "start:dev": "cross-env ENV_NAME=dev MOCK=none && npm run dev",
-    "start:fat": "cross-env ENV_NAME=fat MOCK=none && npm run dev",
-    "start:uat": "cross-env ENV_NAME=uat && npm run dev",
-    "start:pro": "cross-env ENV_NAME=pro && npm run dev",
+    "start:dev": "npx cross-env ENV_NAME=dev MOCK=none NODE_ENV=development ENV_DEBUG=local  webpack serve  --mode=development --config ./webpack/webpack.config.js",
+    "start:fat": "npx cross-env ENV_NAME=fat MOCK=none NODE_ENV=development  webpack serve  --mode=development --config ./webpack/webpack.config.js",
+    "start:uat": "npx cross-env ENV_NAME=uat NODE_ENV=development  webpack serve  --mode=development --config ./webpack/webpack.config.js",
+    "start:pro": "npx cross-env ENV_NAME=pro NODE_ENV=development  webpack serve  --mode=development --config ./webpack/webpack.config.js",
     "test": "jest",
     "extract": "lingui extract",
     "compile": "lingui compile",
@@ -31,7 +31,7 @@
   ],
   "husky": {
     "hooks": {
-      "post-commit": "prepare-commit-msg"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -177,6 +177,7 @@
     "@koale/useworker": "^4.0.2",
     "@lingui/core": "^3.12.1",
     "@lingui/react": "^3.13.0",
+    "@pansy/replace-object-keys": "^0.3.3",
     "@woulsl/request": "^3.1.1",
     "@woulsl/storage": "^1.1.0",
     "ahooks": "^3.0.5",
@@ -188,6 +189,7 @@
     "nanoid": "^3.1.30",
     "qiankun": "^2.6.3",
     "qs": "^6.10.2",
+    "querystring": "0.2.0",
     "react": "^17.0.2",
     "react-avatar-editor": "^12.0.0",
     "react-dom": "^17.0.2",

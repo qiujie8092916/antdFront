@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Webpackbar = require("webpackbar");
 
 const CopyPlugin = require("copy-webpack-plugin");
-const CircularDependencyPlugin = require("circular-dependency-plugin");
+// const CircularDependencyPlugin = require("circular-dependency-plugin");
 const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
 
 const TerserPlugin = require("terser-webpack-plugin");
@@ -44,6 +44,7 @@ const createEnvironmentHash = require("./createEnvironmentHash");
 
 // resolve css less scss support module import
 const paths = require("./paths");
+const dynamicProxy = require('./proxy');
 const modules = require("./modules");
 const getClientEnvironment = require("./env");
 
@@ -618,7 +619,7 @@ module.exports = function () {
           },
         ],
         // host: "local-ip",
-        port: "8080",
+        port: "8008",
         historyApiFallback: {
           // Paths with dots should still use the history fallback.
           // See https://github.com/facebook/create-react-app/issues/387.
@@ -633,6 +634,7 @@ module.exports = function () {
         // },
         host: "127.0.0.1",
         // port: 8080, // 设置默认监听端口，如果省略，默认为"8080"
+        proxy: dynamicProxy(process.env.ENV_NAME)
       }
       : [],
     // target: ['web', 'es5'],
@@ -647,10 +649,10 @@ module.exports = function () {
       // See https://github.com/facebook/create-react-app/issues/240
       isEnvDevelopment && new CaseSensitivePathsPlugin(),
 
-      new CircularDependencyPlugin({
-        exclude: /a\.js|node_modules/, // exclude node_modules
-        failOnError: false, // show a warning when there is a circular dependency
-      }),
+      // new CircularDependencyPlugin({
+      //   exclude: /a\.js|node_modules/, // exclude node_modules
+      //   failOnError: false, // show a warning when there is a circular dependency
+      // }),
 
       // new HtmlWebpackPlugin({
       //   // hash: false, // 防止缓存，在引入的文件后面加hash (PWA就是要缓存，这里设置为false)

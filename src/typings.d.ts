@@ -12,15 +12,13 @@ declare module '*.tiff';
 
 declare module 'mockjs';
 declare module 'nano-memoize';
+declare module '@woulsl/request';
 
 interface Window {
-  // ga: (
-  //   command: 'send',
-  //   hitType: 'event' | 'pageview',
-  //   fieldsObject: GAFieldsObject | string
-  // ) => void;
-  // reloadAuthorized: () => void;
-  // isInMaster: boolean;
-  // checkSlaveApp: (name: string) => boolean;
-  // slaveLinkToApp: (any) => void;
+  reloadAuthorized: () => void;
 }
+
+declare const ENV_DEBUG: string | false;
+declare const ENV_NAME: 'dev' | 'fat' | 'uat' | 'pro' | false;
+declare const CDN_DOMAIN: string;
+declare const CDN_PREFIX: string;

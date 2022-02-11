@@ -56,12 +56,12 @@ const BasicLayout: React.FC = () => {
 
   const { routeConfig, matchPath } = pickRoutes(route, location.pathname);
 
+  console.log('route', route);
+
   return (
-    <div id='prolayout' key='prolayout'>
+    <div className={styles.prolayout} key='prolayout'>
       <ProLayout
-        style={{
-          height: '100vh'
-        }}
+        style={{ height: '100vh' }}
         menuDataRender={() => route}
         menuItemRender={(item, dom) => (
           <div
@@ -81,7 +81,7 @@ const BasicLayout: React.FC = () => {
             onClick={() => {
               window.open('www.baidu.com');
             }}>
-            <img src={logo} />
+            <img alt='logo' src={logo} />
             <h1>Antd Front</h1>
           </div>
         )}
@@ -91,9 +91,7 @@ const BasicLayout: React.FC = () => {
           fixSiderbar: true,
           fixedHeader: true
         }}
-        contentStyle={{
-          margin: 0
-        }}>
+        contentStyle={{ margin: 0 }}>
         {/* <PageContainer> */}
         <TabRoute routeConfig={routeConfig} matchPath={matchPath} />
         {/* </PageContainer> */}

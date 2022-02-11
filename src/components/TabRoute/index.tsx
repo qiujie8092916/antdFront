@@ -4,9 +4,7 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
 import React, { Suspense, useRef } from 'react';
-// import Lru from "@/utils/lru";
 import type { Location } from 'react-router-dom';
-// import { useWhyDidYouUpdate } from 'ahooks';
 import { generatePath, useLocation, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import RightContent from '@/components/PageContainer/RightContent';
@@ -15,11 +13,10 @@ import { DynamicRouteType } from '@/config/routes';
 
 import styles from './index.less';
 
-interface TabObjectType {
-  name: string;
+interface TabObjectType extends DynamicRouteType {
   key: string;
-  page: React.ReactElement | null;
   location: Location;
+  page: React.ReactElement | null;
   params: Record<string, any>;
 }
 
@@ -27,10 +24,17 @@ const { TabPane } = Tabs;
 
 const getTabPath = (tab: TabObjectType) => generatePath(tab.location.pathname, tab.params);
 
-// tab的select key = location.pathname + , + matchpath
+// tab 的 select key = path?query#hash
 // 以此解决 微端情况下 tab 的 key 相同导致页面可能丢失的问题。
-const generTabKey = memoized(
-  (location: Location, matchpath: string) => `${location.pathname},${matchpath}`
+const genKey = memoized(
+  (path: string, query: Record<string, any>, hash: string) =>
+    `${path}${
+      Object.keys(query).length
+        ? `?${Object.keys(query)
+            .reduce((acc, cur) => `${cur}=${query[cur]}&`, '')
+            .slice(1)}`
+        : ''
+    }${hash ?? ''}`
 );
 
 // 从key中返回 ,号后面的字符
@@ -68,12 +72,12 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
   useCreation(() => {
     const tab = tabList.current.get(matchPath);
     const newTab: TabObjectType = {
-      name: routeConfig.name,
-      key: generTabKey(location, matchPath),
-      page: ele,
-      // access:routeConfig.access,
+      ...routeConfig,
+      params,
       location,
-      params
+      page: ele,
+      name: routeConfig.name,
+      key: genKey(matchPath, params, location.search)
     };
     // console.log("tabList is",tabList);
     // console.log("cur tab is:",tab);
@@ -95,8 +99,6 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
 
   const closeTab = useMemoizedFn((selectKey) => {
     // 记录原真实路由,微前端可能修改
-    // keyLruSquence.newest.value.curPath = window.location.pathname
-    // navigate(keyLruSquence.get(selectKey).curPath,{replace:true});
     if (tabList.current.size >= 2) {
       tabList.current.delete(getTabMapKey(selectKey));
       const nextKey = _.last(Array.from(tabList.current.keys()));
@@ -120,22 +122,21 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
     []
   );
 
-  // useWhyDidYouUpdate('useWhyDidYouUpdateTabRoutes', { ...props, ele,location,tabList });
   return (
     <Tabs
-      className={styles.tabs}
-      activeKey={generTabKey(location, matchPath)}
-      onChange={(key) => selectTab(key)}
-      tabBarExtraContent={operations}
-      tabBarStyle={{ background: '#fff' }}
-      tabPosition='top'
-      animated
-      tabBarGutter={-1}
       hideAdd
+      animated
+      tabPosition='top'
+      tabBarGutter={-1}
       type='editable-card'
+      className={styles.tabs}
+      tabBarExtraContent={operations}
+      activeKey={routeConfig.fullPath}
+      onChange={(key) => selectTab(key)}
+      tabBarStyle={{ background: '#fff' }}
       onEdit={(targetKey) => closeTab(targetKey)}>
       {[...tabList.current.values()].map((item) => (
-        <TabPane tab={i18n._(item.name)} key={item.key}>
+        <TabPane tab={i18n._(item.name)} key={item.fullPath}>
           <Suspense fallback={<PageLoading />}>{item.page}</Suspense>
         </TabPane>
       ))}

@@ -8,39 +8,52 @@ import {
   PieChartOutlined,
   UserOutlined
 } from '@ant-design/icons';
-import _ from 'lodash';
+import { upperFirst } from 'lodash';
 import memoized from 'nano-memoize';
 import React from 'react';
 
 import { isUrl } from '@/utils/is';
-// 需要 引入 react jsx parser么？ 好像有点大。就这几个图标，还是 用函数代替吧。
+
+const svgStyle = {
+  display: 'flex',
+  fontSize: '18px',
+  marginRight: '10px',
+  alignItems: 'center',
+  justifyContent: 'flex-start'
+};
+
+const imgStyle = {
+  width: '18px',
+  height: '40px',
+  marginRight: '10px',
+  backgroundSize: '100%',
+  display: 'inline-block',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center center'
+};
 
 const icons = new Map([
-  ['HomeOutlined', <HomeOutlined />],
-  ['AppstoreOutlined', <AppstoreOutlined />],
-  ['CompassOutlined', <CompassOutlined />],
-  ['FormOutlined', <FormOutlined />],
-  ['PieChartOutlined', <PieChartOutlined />],
-  ['PaperClipOutlined', <PaperClipOutlined />],
-  ['BarsOutlined', <BarsOutlined />],
-  ['UserOutlined', <UserOutlined />]
+  ['HomeOutlined', <HomeOutlined style={svgStyle} />],
+  ['AppstoreOutlined', <AppstoreOutlined style={svgStyle} />],
+  ['CompassOutlined', <CompassOutlined style={svgStyle} />],
+  ['FormOutlined', <FormOutlined style={svgStyle} />],
+  ['PieChartOutlined', <PieChartOutlined style={svgStyle} />],
+  ['PaperClipOutlined', <PaperClipOutlined style={svgStyle} />],
+  ['BarsOutlined', <BarsOutlined style={svgStyle} />],
+  ['UserOutlined', <UserOutlined style={svgStyle} />]
 ]);
 
-const getIcon = memoized((_iconStr: string) => {
-  if (isUrl(_iconStr)) {
+const getIcon = memoized((iconStr: string) => {
+  if (isUrl(iconStr))
     return (
-      <img
-        alt={'icon'}
-        src={_iconStr}
+      <div
         style={{
-          height: 32,
-          width: 32
+          ...imgStyle,
+          backgroundImage: `url(${iconStr})`
         }}
       />
     );
-  }
-  const iconStr = _.upperFirst(_iconStr);
-  return <>{icons.get(iconStr)}</>;
+  else return icons.get(upperFirst(iconStr));
 });
 
 export default getIcon;

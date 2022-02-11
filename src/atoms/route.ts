@@ -1,11 +1,15 @@
+// import replaceObjectKeys from '@pansy/replace-object-keys';
 import { atom, selector } from 'recoil';
 
 import {
   dynamicConfig,
   generateRouteWithMenuTypes,
+  getAppsMenu,
   mergeRoute,
   staticConfig
 } from '@/utils/route-utils';
+
+import { haveApplicationsSelector } from './menu';
 
 // 通常权限只更新menu的route 故 在此做区分。
 // 基本不变的路由为 staticRoute.
@@ -25,7 +29,19 @@ export const dynamicConfigAtom = atom({
 const rmtConfigAtom = selector({
   key: 'rmtConfigAtom',
   get: ({ get }) =>
-    generateRouteWithMenuTypes(get(staticConfigAtom) ?? [], get(dynamicConfigAtom) ?? [])
+    generateRouteWithMenuTypes(
+      get(staticConfigAtom) ?? [],
+      (get(dynamicConfigAtom) ?? []).concat(
+        // replaceObjectKeys(
+        getAppsMenu(get(haveApplicationsSelector))
+        /* ,
+          { logoUrl: 'icon', routes: 'children' },
+          { simplify: false, childrenKey: 'children' }
+
+        )
+        */
+      )
+    )
 });
 
 export const staticRouteAtom = selector({

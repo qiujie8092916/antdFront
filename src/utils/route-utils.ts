@@ -1,5 +1,6 @@
 import { i18n } from '@lingui/core';
 import _ from 'lodash';
+import { parse } from 'querystring';
 import { resolvePath } from 'react-router-dom';
 
 import getIcon from '@/config/icons';
@@ -11,10 +12,15 @@ import type {
   StaticRouteType
 } from '@/config/routes';
 import routeConfig from '@/config/routes';
+import { Application, AppRoute } from '@/services/application';
+import { isUrl } from '@/utils/is';
+import { CUSTOM_NAV_PREFIX } from "@/config/base";
 // import { t } from "@lingui/macro";
 // 单独 拉出config 因为 修改route的时候，是按"@/config/routes"的格式提供的。
 // 而后端不可能提供key，resolvepath之类的参数。
 // staticConfig 以 menutabs 为标志。
+
+export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
 const normalizePathname = (pathname: string) => pathname.replace(/\/+$/, '').replace(/^\/*/, '/');
 
@@ -132,23 +138,23 @@ function generateProlayoutMenuDataItem(
     );
 
     const menuDataItem: DynamicRouteType = {
-      // name为空则component 代替
-      // 加上翻译
+      ...conf,
+      /** 加上翻译  name为空则component 代替 */
       name: conf.name ?? conf.component,
-      // 支持大小写敏感
+      /** 支持大小写敏感 */
       caseSensitive: conf.caseSensitive,
-      // 支持index route
+      /** 支持index route */
       index: conf.index,
-      // 完整路径 parentPath:/a  childrenPath:b  fullPath:/a/b
+      /** 完整路径 parentPath:/a  childrenPath:b  fullPath:/a/b */
       fullPath: resPath.pathname,
-      key: resPath.pathname,
       icon: getIcon(conf.icon),
       element: conf.component
         ? getPage(conf.component, conf.access, resPath.pathname)
         : getPage('Default'),
       access: conf.access
     };
-    // 支持prolayout路由
+
+    /** 支持prolayout路由 */
     if (conf.path) {
       menuDataItem.path = conf.path;
     }
@@ -162,7 +168,6 @@ function generateProlayoutMenuDataItem(
 }
 
 // 根据 @/config/routes.js 里的格式，解析出全局的路由。构造好路由结构。
-
 export function generateRouteWithMenuTypes(
   staticConf: StaticRouteType[],
   dynamicConf: DynamicRouteType[]
@@ -200,7 +205,6 @@ export function generateRouteWithMenuTypes(
         // 支持index route
         index: conf.index,
         fullPath: resPath.pathname,
-        // element: conf.component,
         element: conf.component
           ? getPage(conf.component, false, resPath.pathname)
           : getPage('Default'),
@@ -220,8 +224,6 @@ export function generateRouteWithMenuTypes(
           // 确保只添加一次。
           menuTabs = generateProlayoutMenuDataItem(dynamicConf, basePath);
           route.menuTabs = true;
-          // 将全局的和功能菜单分开。方便路由多层次嵌套
-          // route.path = route.path.endsWith("/*") ? route.path : (route.path + "/*").replace("\/\/","\/");
         }
       }
 
@@ -258,4 +260,92 @@ export const mergeRoute = (
 
   newRoute = replaceFlagPropertyByChilren(newRoute);
   return newRoute;
+};
+
+/**
+ * @desc 接口返回的子应用路由结构适配 react-router6
+ *  子应用里的子路径的路径：绝对路径 -> 相对路径
+ * @param {AppRoute[] | null} applicationRoutes
+ * @param {string | null} parentPath 父路径
+ * @returns {AppRoute[] | null}
+ */
+export const transPathAdjustReactRouterFromRestful = (
+  applicationRoutes: AppRoute[] | null,
+  parentPath?: string | null
+): AppRoute[] | null => {
+  if (!applicationRoutes) return applicationRoutes;
+  return applicationRoutes.map((appRoute: AppRoute) => ({
+    ...appRoute,
+    children: transPathAdjustReactRouterFromRestful(appRoute.children, appRoute.path),
+    path:
+      appRoute.path && !isUrl(appRoute.path)
+        ? appRoute.path.slice(1 + (parentPath ?? '').length)
+        : appRoute.path
+  }));
+};
+
+/**
+ * @desc 左侧菜单数据处理
+ */
+export const getSiderMenuList = (
+  menus: AppRoute[] | null,
+  entry: string,
+  parentPath?: string
+): DynamicRouteType[] => {
+  // 根据扩展字段进行菜单排序处理
+  return [...(menus ?? [])]
+    .sort((a, b) => {
+      let { ext: aExt } = a;
+      let { ext: bExt } = b;
+      if (aExt && bExt) {
+        try {
+          aExt = JSON.parse(aExt);
+          bExt = JSON.parse(bExt);
+          return (aExt as any).index > (bExt as any).index ? 1 : -1;
+        } catch (e) {
+          return 0;
+        }
+      }
+      return 0;
+    })
+    .reduce((acc, menu) => {
+      const { children: routes, name, icon, hidden, path, applicationKey } = menu;
+      /** 过滤掉欢迎页 && 过滤隐藏菜单 */
+      if (path !== '/welcome' && !hidden) {
+        acc.push({
+          name,
+          component: entry,
+          microApp: applicationKey.toLowerCase(),
+          icon: icon ?? 'AccountBookOutlined',
+          children: getSiderMenuList(routes, entry, path),
+          path: path && !isUrl(path) ? path.slice(1 + (parentPath ?? '').length) : path
+        });
+      }
+
+      return acc;
+    }, [] as DynamicRouteType[]);
+};
+
+/**
+ * @desc Application => DynamicRouteType
+ * @param {Application[]} apps
+ */
+export const getAppsMenu = (apps: Application[]): DynamicRouteType[] => {
+  return apps.reduce((acc, item) => {
+    const { key, name, routes, appType, isDel, logoUrl } = item;
+    // 自建类型，并且未删除
+    if (appType === 1 && !isDel && routes && ['ugc', 'oagw'].includes(key)) {
+      const applicationUrl = item.applicationUrl.replace(/\/$/, '');
+
+      acc.push({
+        name,
+        icon: logoUrl, // 不使用icon，使用url会通过img渲染，导致闪烁
+        path: CUSTOM_NAV_PREFIX,
+        microApp: key.toLowerCase(),
+        children: getSiderMenuList(routes, applicationUrl)
+      });
+    }
+
+    return acc;
+  }, [] as DynamicRouteType[]);
 };

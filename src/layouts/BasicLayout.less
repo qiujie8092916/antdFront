@@ -1,5 +1,18 @@
 @import '~antd/lib/style/themes/default.less';
 
+.prolayout {
+  :global .ant-pro-menu-item {
+    display: flex;
+    :global .ant-pro-menu-item-title {
+      flex: 1;
+      margin-left: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
 .logo {
   position: relative;
   display: flex;
