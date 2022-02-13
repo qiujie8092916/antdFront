@@ -34,7 +34,6 @@ const App: React.FC = () => {
   useUnmount(() => {
     cancelGetUserApplication();
   });
-
   return (
     <Suspense fallback={<PageLoading />}>
       <Locale>{element}</Locale>

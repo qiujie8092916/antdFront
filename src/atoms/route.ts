@@ -1,9 +1,8 @@
-// import replaceObjectKeys from '@pansy/replace-object-keys';
 import { atom, selector } from 'recoil';
 
 import {
   dynamicConfig,
-  generateRouteWithMenuTypes,
+  generateAllRoute,
   getAppsMenu,
   mergeRoute,
   staticConfig
@@ -29,17 +28,10 @@ export const dynamicConfigAtom = atom({
 const rmtConfigAtom = selector({
   key: 'rmtConfigAtom',
   get: ({ get }) =>
-    generateRouteWithMenuTypes(
+    generateAllRoute(
       get(staticConfigAtom) ?? [],
       (get(dynamicConfigAtom) ?? []).concat(
-        // replaceObjectKeys(
         getAppsMenu(get(haveApplicationsSelector))
-        /* ,
-          { logoUrl: 'icon', routes: 'children' },
-          { simplify: false, childrenKey: 'children' }
-
-        )
-        */
       )
     )
 });

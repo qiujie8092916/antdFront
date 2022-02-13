@@ -46,17 +46,10 @@ interface Props {
 }
 
 const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
-  // 使用map代替array 后 ，lru暂时不用了...
-  // 主要是 map 好remove key
-  // const keyLruSquence = useCreation(() => new Lru(25));
-
   const ele = useOutlet();
-
-  const location = useLocation();
-
   const params = useParams();
-
   const navigate = useNavigate();
+  const location = useLocation();
 
   // tabList 使用 ref ，避免二次render。
   // const [tabList, setTabList] = useSafeState([]);
@@ -79,12 +72,6 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
       name: routeConfig.name,
       key: genKey(matchPath, params, location.search)
     };
-    // console.log("tabList is",tabList);
-    // console.log("cur tab is:",tab);
-    // console.log('match matchPath is',matchPath);
-    // console.log('params is',params);
-    // console.log('location is',location);
-    // console.log('ele is',ele);
     if (tab) {
       // 处理微前端情况，如发生路径修改则替换
       // 还要比较参数
@@ -131,12 +118,12 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
       type='editable-card'
       className={styles.tabs}
       tabBarExtraContent={operations}
-      activeKey={routeConfig.fullPath}
+      activeKey={routeConfig.path}
       onChange={(key) => selectTab(key)}
       tabBarStyle={{ background: '#fff' }}
       onEdit={(targetKey) => closeTab(targetKey)}>
       {[...tabList.current.values()].map((item) => (
-        <TabPane tab={i18n._(item.name)} key={item.fullPath}>
+        <TabPane tab={i18n._(item.name)} key={routeConfig.path}>
           <Suspense fallback={<PageLoading />}>{item.page}</Suspense>
         </TabPane>
       ))}

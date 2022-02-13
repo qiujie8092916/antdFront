@@ -61,8 +61,14 @@ const BasicLayout: React.FC = () => {
   return (
     <div className={styles.prolayout} key='prolayout'>
       <ProLayout
+        headerRender={false}
         style={{ height: '100vh' }}
+        contentStyle={{ margin: 0 }}
         menuDataRender={() => route}
+        menuProps={{
+          mode: 'vertical',
+          selectedKeys: [matchPath]
+        }}
         menuItemRender={(item, dom) => (
           <div
             onClick={() => {
@@ -73,7 +79,6 @@ const BasicLayout: React.FC = () => {
             {dom}
           </div>
         )}
-        selectedKeys={[matchPath]}
         menuHeaderRender={() => (
           <div
             id='customize_menu_header'
@@ -85,13 +90,11 @@ const BasicLayout: React.FC = () => {
             <h1>Antd Front</h1>
           </div>
         )}
-        headerRender={false}
         {...{
           ...defaultSettings,
           fixSiderbar: true,
           fixedHeader: true
-        }}
-        contentStyle={{ margin: 0 }}>
+        }}>
         {/* <PageContainer> */}
         <TabRoute routeConfig={routeConfig} matchPath={matchPath} />
         {/* </PageContainer> */}
