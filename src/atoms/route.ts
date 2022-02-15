@@ -30,9 +30,7 @@ const rmtConfigAtom = selector({
   get: ({ get }) =>
     generateAllRoute(
       get(staticConfigAtom) ?? [],
-      (get(dynamicConfigAtom) ?? []).concat(
-        getAppsMenu(get(haveApplicationsSelector))
-      )
+      (get(dynamicConfigAtom) ?? []).concat(getAppsMenu(get(haveApplicationsSelector)))
     )
 });
 

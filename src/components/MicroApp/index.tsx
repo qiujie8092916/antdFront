@@ -1,35 +1,44 @@
 import { useMount, useUnmount } from 'ahooks';
-import { customAlphabet } from 'nanoid';
 import type { MicroApp as MicroApp4Qiankun } from 'qiankun';
 import { loadMicroApp } from 'qiankun';
 import React, { useRef } from 'react';
 
-const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 10);
+import { CUSTOM_NAV_PREFIX, MICROAPP_CONTAINER_ID } from '@/config/base';
 
 interface Props {
   entry: string;
+  appKey: string;
   fullPath: string;
 }
 
-const MicroApp: React.FC<Props> = ({ entry, fullPath }) => {
+const MicroApp: React.FC<Props> = ({ entry, appKey, fullPath }) => {
   const container = useRef(null);
-  const containerID = useRef<string>(nanoid());
   const microApp = useRef<MicroApp4Qiankun | null>(null);
 
   useMount(() => {
+    console.log('fullPath', fullPath);
     microApp.current = loadMicroApp(
       {
-        name: `app${containerID.current}`,
         entry,
-        // container: `#${id}`,
+        name: `${MICROAPP_CONTAINER_ID}${appKey}`,
+        container: `#${MICROAPP_CONTAINER_ID}${appKey}`,
         props: {
-          basePath: fullPath
-        },
-        container: `#${containerID.current}`
+          basePath: `${CUSTOM_NAV_PREFIX}/${appKey}`
+        }
       },
       {
-        sandbox: { strictStyleIsolation: true },
-        singular: false
+        sandbox: {
+          // experimentalStyleIsolation: true,
+          strictStyleIsolation: true
+        },
+        singular: false /* ,
+        fetch(url, ...args) {
+          return window.fetch(url, {
+            ...args,
+            mode: 'cors',
+            credentials: 'include'
+          });
+        } */
       }
     );
   });
@@ -41,8 +50,7 @@ const MicroApp: React.FC<Props> = ({ entry, fullPath }) => {
     return 0;
   });
 
-  // if (isUrl(entry)) { return (<NotFound />) }
-  return <div ref={container} id={containerID.current} />;
+  return <div ref={container} id={`${MICROAPP_CONTAINER_ID}${appKey}`} />;
 };
 
 export default MicroApp;

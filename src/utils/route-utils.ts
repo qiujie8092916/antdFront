@@ -126,7 +126,7 @@ function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string): D
     // fullPath 可去掉*号，以免引起url路径错误
     // /*的配置只会在路由  路径的末尾...
     const resPath = resolvePath(
-      conf.path ? _.replace(conf.path, '/*', '') : '/*',
+      conf.path ? _.replace(conf.path, conf.path === '*' ? '*' : '/*', '') : '/*',
       normalizePathname(basePath)
     );
 
@@ -135,16 +135,10 @@ function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string): D
       access: conf.access,
       icon: getIcon(conf.icon),
       fullPath: resPath.pathname,
-      name: conf.name ?? conf.element,
       element: conf.element
-        ? getPage(conf.element, conf.access, resPath.pathname)
-        : getPage('Default'),
+        ? getPage(conf.element, conf.access, resPath.pathname, conf.microApp)
+        : getPage('Default')
     };
-
-    /** 支持prolayout路由 */
-    if (conf.path) {
-      menuDataItem.path = conf.path;
-    }
 
     if (conf.children) {
       menuDataItem.children = generateDynamicRoute(conf.children, resPath.pathname);
@@ -190,15 +184,12 @@ export function generateAllRoute(
         // reactRouter 6 的 父子path 用来喂给react router6吃的1
         // 完整路径 parentPath:/a  childrenPath:b  fullPath:/a/b
         // fullPath 可去掉*号，以免引起url路径错误
-        // path: resPath.pathname,
+        // 支持prolayout路由
+        path: conf.path,
         element: conf.component
           ? getPage(conf.component, false, resPath.pathname)
           : getPage('Default')
       };
-      // 支持prolayout路由
-      if (conf.path) {
-        route.path = conf.path;
-      }
 
       if (conf.children) {
         route.children = generateStaticRoute(conf.children, resPath.pathname);
@@ -206,7 +197,7 @@ export function generateAllRoute(
         // 遇到menutabs 则 返回，将 静态和菜单的动态路由分开 ，有atom进行管理。
         if (!menuTabs && conf.menuTabs) {
           // 确保只添加一次。
-          menuTabs = generateDynamicRoute(dynamicConf, basePath);
+          menuTabs = generateDynamicRoute(dynamicConf, '/');
           route.menuTabs = true;
         }
       }
@@ -299,10 +290,10 @@ const getSiderMenuList = (
         acc.push({
           name,
           element: entry,
-          microApp: applicationKey.toLowerCase(),
           icon: icon ?? 'AccountBookOutlined',
+          microApp: applicationKey.toLowerCase(),
           children: getSiderMenuList(routes, entry, path),
-          path: path && !isUrl(path) ? path.slice(1 + (parentPath ?? '').length) : path
+          path: `${path && !isUrl(path) ? path.slice(1 + (parentPath ?? '').length) : path}/*`
         });
       }
 
@@ -319,14 +310,13 @@ export const getAppsMenu = (apps: Application[]): DynamicRouteType[] => {
     const { key, name, routes, appType, isDel, logoUrl } = item;
     // 自建类型，并且未删除
     if (appType === 1 && !isDel && routes && ['ugc', 'oagw'].includes(key)) {
-      const applicationUrl = item.applicationUrl.replace(/\/$/, '');
-
       acc.push({
         name,
         icon: logoUrl, // 不使用icon，使用url会通过img渲染，导致闪烁
-        path: `${CUSTOM_NAV_PREFIX}/${key.toLowerCase()}`,
         microApp: key.toLowerCase(),
-        children: getSiderMenuList(routes, applicationUrl)
+        path: `${CUSTOM_NAV_PREFIX.slice(1)}/${key.toLowerCase()}/*`,
+        entry: item.applicationUrl,
+        children: getSiderMenuList(routes, item.applicationUrl)
       });
     }
 

@@ -8,7 +8,7 @@
 import { MenuDataItem } from '@ant-design/pro-layout';
 import type { RouteObject } from 'react-router-dom';
 
-import { CUSTOM_NAV_PREFIX } from '@/config/base';
+// import { CUSTOM_NAV_PREFIX } from '@/config/base';
 
 // 理解下来 menuTabs 里包裹的是动态路由（sideMenuBar的路由）
 // 静态路由则是死路由 比如用户信息页、登录页等等，且将 menuTabs 置为 true，切断了下面的动态路由
@@ -25,6 +25,8 @@ export interface DynamicRouteType extends RouteObject, MenuDataItem {
   icon?: string;
   /** 权限 @/config/access里可配置静态策略。权限入口在@/config/pages里 */
   access?: string;
+  /** 顶层菜单会有 应用真实访问路径（和以下 element 相同，element 最终会转为 React.ReactElement, entry 则会继续保留原始入口） */
+  entry?: string;
   /** 最里层菜单会有 应用入口组件 非动态的有page属性的路由，会默认显示在sideMmenu里 微前端为子应用入口 */
   element?: string;
   /** 子应用 key */
@@ -118,14 +120,24 @@ const routes: RouteType[] = [
               {
                 name: '微前端',
                 microApp: 'vue2',
-                path: `${CUSTOM_NAV_PREFIX}/vue2`,
+                path: `micro/vue2/*`,
                 icon: 'PaperClipOutlined',
+                entry: 'http://localhost:7101/vue2', // 喂给 registerMicroApps
                 children: [
                   {
+                    microApp: 'vue2',
                     name: 'vue2测试',
                     path: '*',
-                    access: 'microOpen',
-                    element: 'http://localhost:7101' // 微前端配置
+                    // access: 'microOpen',
+                    element: 'http://localhost:7101/vue2' // 微前端配置
+                  },
+
+                  {
+                    microApp: 'vue2',
+                    name: 'vue2 about',
+                    path: 'about/*',
+                    // access: 'microOpen',
+                    element: 'http://localhost:7101/vue2' // 微前端配置
                   }
                 ]
               }

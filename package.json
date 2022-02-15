@@ -186,7 +186,6 @@
     "history": "^5.1.0",
     "lodash": "^4.17.21",
     "nano-memoize": "^1.2.1",
-    "nanoid": "^3.1.30",
     "qiankun": "^2.6.3",
     "qs": "^6.10.2",
     "querystring": "0.2.0",

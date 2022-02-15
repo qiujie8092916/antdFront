@@ -38,9 +38,9 @@ const pages: Map<string, React.ReactElement> = new Map([
   ['Default', <Outlet />] // default microapp
 ]);
 
-const getPage = memoized((pageStr: string, access?: string, fullPath = '') => {
+const getPage = memoized((pageStr: string, access?: string, fullPath = '', microApp = '') => {
   const page = isHttp(pageStr) ? (
-    <MicroApp entry={pageStr} fullPath={fullPath} />
+    <MicroApp entry={pageStr} fullPath={fullPath} appKey={microApp} />
   ) : (
     pages.get(_.upperFirst(pageStr))
   );

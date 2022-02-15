@@ -32,3 +32,5 @@ export const ROOT_DOMAIN = isDev ? `https://admin${ENV_DOT}.xjjj.co` : '';
 
 // 自定义路由前经
 export const CUSTOM_NAV_PREFIX = '/micro';
+
+export const MICROAPP_CONTAINER_ID = 'qiankun-';

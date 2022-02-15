@@ -16,8 +16,9 @@ let instance = null;
 
 function render(props = {}) {
   const { container, basePath } = props;
+  console.log('basePath', basePath);
   router = new VueRouter({
-    base: window.__POWERED_BY_QIANKUN__ ? basePath : '/',
+    base: window.__POWERED_BY_QIANKUN__ ? basePath : '/vue2/',
     mode: 'history',
     routes,
   });
