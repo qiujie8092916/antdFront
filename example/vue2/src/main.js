@@ -50,6 +50,10 @@ function storeTest(props) {
     });
 }
 
+(function(){
+  window.routerBase = '/vue2/';
+})();
+
 export async function bootstrap() {
   console.log('[vue] vue app bootstraped');
 }

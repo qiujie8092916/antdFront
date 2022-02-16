@@ -28,8 +28,9 @@ const MicroApp: React.FC<Props> = ({ entry, appKey, fullPath }) => {
       },
       {
         sandbox: {
-          experimentalStyleIsolation: true
-          // strictStyleIsolation: true
+          /** vue scoped css 不支持增加类名前缀 暂时注释 */
+          // experimentalStyleIsolation: true
+          strictStyleIsolation: true
         },
         singular: false,
         // fetch(url, ...args) {

@@ -22,6 +22,9 @@ const App: React.FC = () => {
 
   const element = useRoutes(appRoute);
 
+  // @ts-ignore
+  window.routerBase = '/antFront/';
+
   const { run: getUserApplication, cancel: cancelGetUserApplication } = useRequest(
     queryUserApplication,
     {
