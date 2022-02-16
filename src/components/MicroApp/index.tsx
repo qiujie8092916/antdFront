@@ -28,17 +28,22 @@ const MicroApp: React.FC<Props> = ({ entry, appKey, fullPath }) => {
       },
       {
         sandbox: {
-          // experimentalStyleIsolation: true,
+          // experimentalStyleIsolation: true
           strictStyleIsolation: true
         },
-        singular: false /* ,
-        fetch(url, ...args) {
-          return window.fetch(url, {
-            ...args,
-            mode: 'cors',
-            credentials: 'include'
-          });
-        } */
+        singular: false,
+        // fetch(url, ...args) {
+        //   console.log('MicroApp fetch', url);
+        //   return window.fetch(url, {
+        //     ...args,
+        //     mode: 'cors',
+        //     credentials: 'include'
+        //   });
+        // },
+        getPublicPath: (e) => {
+          console.log('getPublicPath', e);
+          return e as string;
+        }
       }
     );
   });

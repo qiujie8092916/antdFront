@@ -315,8 +315,8 @@ export const getAppsMenu = (apps: Application[]): DynamicRouteType[] => {
         icon: logoUrl, // 不使用icon，使用url会通过img渲染，导致闪烁
         microApp: key.toLowerCase(),
         path: `${CUSTOM_NAV_PREFIX.slice(1)}/${key.toLowerCase()}/*`,
-        entry: item.applicationUrl,
-        children: getSiderMenuList(routes, item.applicationUrl)
+        entry: `${item.applicationUrl}/`,
+        children: getSiderMenuList(routes, `${item.applicationUrl}/`)
       });
     }
 

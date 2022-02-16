@@ -122,14 +122,14 @@ const routes: RouteType[] = [
                 microApp: 'vue2',
                 path: `micro/vue2/*`,
                 icon: 'PaperClipOutlined',
-                entry: 'http://localhost:7101/vue2', // 喂给 registerMicroApps
+                entry: 'http://localhost:7101/vue2/', // 喂给 registerMicroApps
                 children: [
                   {
                     microApp: 'vue2',
                     name: 'vue2测试',
                     path: '*',
                     // access: 'microOpen',
-                    element: 'http://localhost:7101/vue2' // 微前端配置
+                    element: 'http://localhost:7101/vue2/' // 微前端配置
                   },
 
                   {
@@ -137,7 +137,7 @@ const routes: RouteType[] = [
                     name: 'vue2 about',
                     path: 'about/*',
                     // access: 'microOpen',
-                    element: 'http://localhost:7101/vue2' // 微前端配置
+                    element: 'http://localhost:7101/vue2/' // 微前端配置
                   }
                 ]
               }
