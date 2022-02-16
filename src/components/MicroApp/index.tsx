@@ -28,8 +28,8 @@ const MicroApp: React.FC<Props> = ({ entry, appKey, fullPath }) => {
       },
       {
         sandbox: {
-          // experimentalStyleIsolation: true
-          strictStyleIsolation: true
+          experimentalStyleIsolation: true
+          // strictStyleIsolation: true
         },
         singular: false,
         // fetch(url, ...args) {
