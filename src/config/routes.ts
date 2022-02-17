@@ -49,97 +49,58 @@ export interface RouteType extends BaseRouteType {
 
 const routes: RouteType[] = [
   {
-    // path:'/',
-    component: 'blankLayout',
+    path: '/user',
+    component: 'userLayout',
     children: [
       {
-        path: '/user',
-        component: 'userLayout',
-        children: [
-          {
-            path: 'register',
-            component: 'userRegister'
-          },
-          {
-            path: 'login',
-            component: 'userLogin'
-          }
-        ]
+        path: 'register',
+        component: 'userRegister'
       },
       {
-        // path: '/',  // prolayout route写法
-        component: 'securityLayout',
-        children: [
+        path: 'login',
+        component: 'userLogin'
+      }
+    ]
+  },
+  {
+    // path: '/',  // prolayout route写法
+    component: 'securityLayout',
+    children: [
+      {
+        // path: "/", // prolayout route写法
+        component: 'basicLayout',
+        // access:'validUser',
+        // 之所以用menuTabs 为了将功能单独做成动态的route
+        menuTabs: [
           {
-            // path: "/", // prolayout route写法
-            component: 'basicLayout',
-            // access:'validUser',
-            // 之所以用menuTabs 为了将功能单独做成动态的route
-            menuTabs: [
+            path: '/',
+            index: true, // index route写法
+            name: '欢迎菜单', // 翻译失败后 则采用name配置值,如无需全球化直接使用中文即可。
+            icon: 'HomeOutlined', // @/config/icons里配置的图标,小写也可以
+            access: 'dashboardOpen', // @/config/access里可配置静态策略。权限入口在@/config/pages里。
+            element: 'dashboard' // 非动态的有page属性的路由，会默认显示在sideMmenu里。
+          },
+          {
+            name: '微前端',
+            microApp: 'vue2',
+            path: `micro/vue2/*`,
+            icon: 'PaperClipOutlined',
+            entry: 'http://localhost:7101/vue2/', // 喂给 registerMicroApps
+            children: [
               {
-                path: '/',
-                index: true, // index route写法
-                name: '欢迎菜单', // 翻译失败后 则采用name配置值,如无需全球化直接使用中文即可。
-                icon: 'HomeOutlined', // @/config/icons里配置的图标,小写也可以
-                access: 'dashboardOpen', // @/config/access里可配置静态策略。权限入口在@/config/pages里。
-                element: 'dashboard' // 非动态的有page属性的路由，会默认显示在sideMmenu里。
-              },
-              // {
-              //   // 带subs的 为下拉菜单，表明其无需路由，会其忽略page属性。 但会作为subs子路由的父路由,作为siderMenu的Key,内部计数+1
-              //   // 此处没有 component ，则使用 page.js里的 Default 组件
-              //   name: '功能',
-              //   path: '/ab',
-              //   icon: 'AppstoreOutlined',
-              //   children: [
-              //     {
-              //       name: '测试1',
-              //       path: 'a', // 解析为/ab/a
-              //       element: 'test1', // page 建议使用小写，内部会转换成大写,对应到组件上。权限配置中与此保持一致
-              //       access: 'test1Open'
-              //     },
-              //     {
-              //       name: '测试2',
-              //       path: 'b', // 解析为/ab/b
-              //       element: 'test2',
-              //       access: 'test2Open'
-              //     },
-              //     {
-              //       name: '测试3',
-              //       path: 'c', // 解析为/c
-              //       element: 'test3',
-              //       access: 'test3Open'
-              //     },
-              //     {
-              //       name: '测试4',
-              //       path: 'counter', // 解析为/c
-              //       element: 'test4',
-              //       access: 'test4Open'
-              //     }
-              //   ]
-              // },
-              {
-                name: '微前端',
                 microApp: 'vue2',
-                path: `micro/vue2/*`,
-                icon: 'PaperClipOutlined',
-                entry: 'http://localhost:7101/vue2/', // 喂给 registerMicroApps
-                children: [
-                  {
-                    microApp: 'vue2',
-                    name: 'vue2测试',
-                    path: '*',
-                    // access: 'microOpen',
-                    element: 'http://localhost:7101/vue2/' // 微前端配置
-                  },
+                name: 'vue2测试',
+                path: '*',
+                // access: 'microOpen',
+                element: 'http://localhost:7101/vue2/' // 微前端配置
+              },
 
-                  {
-                    microApp: 'vue2',
-                    name: 'vue2 about',
-                    path: 'about/*',
-                    // access: 'microOpen',
-                    element: 'http://localhost:7101/vue2/' // 微前端配置
-                  }
-                ]
+              {
+                microApp: 'vue2',
+                name: 'vue2 about',
+                path: 'about/*',
+                // access: 'microOpen',
+                element: 'http://localhost:7101/vue2/' // 微前端配置
               }
             ]
           }

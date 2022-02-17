@@ -8,24 +8,19 @@ import AccessResult from '@/components/AccessResult';
 import { isHttp } from '@/utils/is';
 
 const Dashboard = lazy(() => import('@/pages/dashboard'));
-
 const UserLogin = lazy(() => import('@/pages/user/login'));
-
+const MicroApp = lazy(() => import('@/components/MicroApp'));
+const UserLayout = lazy(() => import('@/layouts/UserLayout'));
 const BasicLayout = lazy(() => import('@/layouts/BasicLayout'));
 const SecurityLayout = lazy(() => import('@/layouts/SecurityLayout'));
-const BlankLayout = lazy(() => import('@/layouts/BlankLayout'));
-const UserLayout = lazy(() => import('@/layouts/UserLayout'));
-
-const MicroApp = lazy(() => import('@/components/MicroApp'));
 
 const pages: Map<string, React.ReactElement> = new Map([
+  ['Default', <Outlet />], // default microapp
   ['Dashboard', <Dashboard />],
   ['UserLogin', <UserLogin />],
-  ['BasicLayout', <BasicLayout />],
-  ['SecurityLayout', <SecurityLayout />],
-  ['BlankLayout', <BlankLayout />],
   ['UserLayout', <UserLayout />],
-  ['Default', <Outlet />] // default microapp
+  ['BasicLayout', <BasicLayout />],
+  ['SecurityLayout', <SecurityLayout />]
 ]);
 
 const getPage = memoized((pageStr: string, access?: string, fullPath = '', microApp = '') => {

@@ -41,5 +41,6 @@ export default {
   邮箱: 'Email',
   重新获取: 'Re-acquire',
   验证码错误: 'Verification code error',
+  退出登录: 'logout',
   ...login
 };

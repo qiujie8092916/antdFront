@@ -15,7 +15,7 @@ import { isUrl } from '@/utils/is';
 // 而后端不可能提供key，resolvepath之类的参数。
 // staticConfig 以 menutabs 为标志。
 
-export const getPageQuery = () => parse(window.location.href.split('?')[1]);
+export const getPageQuery = () => parse(window.location.search.split('?')[1] ?? '');
 
 const normalizePathname = (pathname: string) => pathname.replace(/\/+$/, '').replace(/^\/*/, '/');
 

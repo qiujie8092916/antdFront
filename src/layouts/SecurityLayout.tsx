@@ -1,12 +1,13 @@
 import { PageLoading } from '@ant-design/pro-layout';
-import { useMount, useRequest, useUnmount } from 'ahooks';
-import { parse, stringify } from 'querystring';
+import { useMount, useRequest } from 'ahooks';
+import { stringify } from 'querystring';
 import React, { useMemo, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { CurrentUser, currentUserAtom } from '@/atoms/user';
 import { queryCurrent } from '@/services/user';
+import { getPageQuery } from '@/utils/route-utils';
 
 const SecurityLayout: React.FC<{ children?: any }> = () => {
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -19,25 +20,14 @@ const SecurityLayout: React.FC<{ children?: any }> = () => {
   });
 
   useMount(() => {
-    console.log('SecurityLayout useMount');
     fetchCurrent()
-      .then((res: CurrentUser) => {
-        console.log('fetchCurrent', res);
-        return setCurrentUser(res);
-      })
+      .then((res: CurrentUser) => setCurrentUser(res))
       .finally(() => setIsReady(true));
   });
 
-  useUnmount(() => {
-    console.log('SecurityLayout useUnmount');
-  });
-
   // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
-  const { search } = window.location;
-  const query = search ? parse(search.slice(1)) : {};
-  const queryString = stringify({
-    redirect: query.redirect || window.location.href
-  });
+  const query = getPageQuery();
+  const queryString = stringify({ redirect: query?.redirect ?? window.location.href });
 
   if (!isReady || (!isLogin && fetchCurrentLoading)) {
     return <PageLoading />;

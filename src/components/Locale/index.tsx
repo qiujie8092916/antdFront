@@ -1,7 +1,5 @@
-// import { Suspense } from "react";
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-// import PageLoading from "@/components/PageLoading";
 import { useMount } from 'ahooks';
 import { ConfigProvider } from 'antd';
 import React, { useEffect } from 'react';
@@ -11,7 +9,7 @@ import { antdLocaleAtom, curLangAtom, locales } from '@/atoms/locale';
 
 // import zh from "@/locales/zh-CN"; // 默认加载中文。 lingui-detect尚不稳定
 
-const Locale: React.FC<{ children: any }> = ({ children }) => {
+const Locale: React.FC = ({ children }) => {
   const curLang = useRecoilValue(curLangAtom);
   const antdLocale = useRecoilValue(antdLocaleAtom);
 

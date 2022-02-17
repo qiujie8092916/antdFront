@@ -42,7 +42,7 @@ import styles from './index.less';
 // ];
 
 const AvatarDropdown: React.FC = () => {
-  const login = useRecoilValue(currentUserAtom);
+  const currentUser = useRecoilValue(currentUserAtom);
   const { logout } = useLogin();
   // const setAccess = useSetRecoilState(accessAtom);
   // const setDynamicRouteConfig = useSetRecoilState(dynamicConfigAtom);
@@ -78,9 +78,9 @@ const AvatarDropdown: React.FC = () => {
         <Avatar
           size='small'
           className={styles.avatar}
-          style={{ backgroundColor: '#ffbf00', verticalAlign: 'middle' }}
+          style={{ backgroundColor: '#ffbf00', verticalAlign: 'middle', color: 'white' }}
           alt='avatar'>
-          {login.account}
+          {currentUser.lastName}
         </Avatar>
       </span>
     </HeaderDropdown>
