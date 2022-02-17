@@ -2,7 +2,7 @@ import ProLayout from '@ant-design/pro-layout';
 import { useCreation } from 'ahooks';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -12,20 +12,20 @@ import { curLangAtom } from '@/atoms/locale';
 import { dynamicRouteAtom } from '@/atoms/route';
 import TabRoute from '@/components/TabRoute';
 import proSettings from '@/config/defaultSettings';
-import { DynamicRouteType } from '@/config/routes';
+import { DynamicRouteMenu } from '@/config/routes';
 import { translateNameProperty } from '@/utils/route-utils';
 
 import styles from './BasicLayout.less';
 
 // 从 config 里 把 匹配的信息 调出来
 // 放这因为 activekey 在 prolayout 和 tabroute 之间共享。
-const pickRoutes = memoized((routes: DynamicRouteType[], pathname: string) => {
+const pickRoutes = memoized((routes: DynamicRouteMenu[], pathname: string) => {
   const matches = matchRoutes(routes, { pathname });
   const routeConfig: any = matches ? matches[matches.length - 1].route : null;
   return {
     routeConfig,
     // matchPath: matches ? matches.map(match => _.replace(match.route.path,'/*','')).join('/') : null // 解决下微端/*路径的问题
-    matchPath: routeConfig ? _.replace(routeConfig.key, '/*', '') : null
+    matchPath: routeConfig ? _.replace(routeConfig.fullPath, '/*', '') : null
   };
 });
 
@@ -36,7 +36,12 @@ const BasicLayout: React.FC = () => {
   const dynamicRoute = useRecoilValue(dynamicRouteAtom);
   const route = useCreation(() => translateNameProperty(dynamicRoute ?? []), [curLang]);
 
-  const { routeConfig, matchPath } = pickRoutes(route, location.pathname);
+  const { routeConfig, matchPath } = useMemo(
+    () => pickRoutes(route, location.pathname),
+    [location.pathname]
+  );
+
+  const { routeConfig: defaultConfig } = useMemo(() => pickRoutes(route, '/'), ['/']);
 
   console.log('route', route);
 
@@ -75,7 +80,7 @@ const BasicLayout: React.FC = () => {
           fixedHeader: true
         }}>
         {/* <PageContainer> */}
-        <TabRoute routeConfig={routeConfig} matchPath={matchPath} />
+        <TabRoute routeConfig={routeConfig} matchPath={matchPath} defaultTab={defaultConfig} />
         {/* </PageContainer> */}
       </ProLayout>
     </div>

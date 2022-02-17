@@ -6,7 +6,13 @@ import { resolvePath } from 'react-router-dom';
 import { CUSTOM_NAV_PREFIX } from '@/config/base';
 import getIcon from '@/config/icons';
 import getPage from '@/config/pages';
-import type { DynamicRouteType, RouteType, StaticRouteType } from '@/config/routes';
+import type {
+  DynamicRouteMenu,
+  DynamicRouteType,
+  RouteType,
+  StaticRouteMenu,
+  StaticRouteType
+} from '@/config/routes';
 import routeConfig from '@/config/routes';
 import { Application, AppRoute } from '@/services/application';
 import { isUrl } from '@/utils/is';
@@ -121,8 +127,8 @@ export function translateNameProperty(route: DynamicRouteType[]): DynamicRouteTy
 }
 
 /** 解析动态路由 */
-function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string): DynamicRouteType[] {
-  return menuTabs.map((conf) => {
+function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string) {
+  return menuTabs.map<DynamicRouteMenu>((conf) => {
     // fullPath 可去掉*号，以免引起url路径错误
     // /*的配置只会在路由  路径的末尾...
     const resPath = resolvePath(
@@ -130,7 +136,7 @@ function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string): D
       normalizePathname(basePath)
     );
 
-    const menuDataItem: DynamicRouteType = {
+    const menuDataItem: DynamicRouteMenu = {
       ...conf,
       access: conf.access,
       icon: getIcon(conf.icon),
@@ -156,8 +162,8 @@ export function generateAllRoute(
   staticConf: StaticRouteType[],
   dynamicConf: DynamicRouteType[]
 ): {
-  staticRoute: StaticRouteType[] | null;
-  menuTabs: DynamicRouteType[] | null;
+  staticRoute: StaticRouteMenu[] | null;
+  menuTabs: DynamicRouteMenu[] | null;
 } {
   // 与prolayout 兼容的menuItem
   // name 用于配置在菜单中的名称，同时会修改为浏览器标签页标题
@@ -170,8 +176,8 @@ export function generateAllRoute(
 
   let menuTabs: DynamicRouteType[] | null = null;
   /** 解析静态路由 */
-  const generateStaticRoute = (config: StaticRouteType[], basePath: string): StaticRouteType[] =>
-    config.map((conf) => {
+  const generateStaticRoute = (config: StaticRouteType[], basePath: string) =>
+    config.map<StaticRouteMenu>((conf) => {
       // fullPath 可去掉*号，以免引起url路径错误
 
       // const resPath = resolvePath(_.replace(conf.path,'/*',''),normalizePathname(basePath));
@@ -180,7 +186,7 @@ export function generateAllRoute(
         normalizePathname(basePath)
       );
 
-      const route: StaticRouteType = {
+      const route: StaticRouteMenu = {
         // reactRouter 6 的 父子path 用来喂给react router6吃的1
         // 完整路径 parentPath:/a  childrenPath:b  fullPath:/a/b
         // fullPath 可去掉*号，以免引起url路径错误

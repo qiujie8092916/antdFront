@@ -5,20 +5,21 @@ import _ from 'lodash';
 import memoized from 'nano-memoize';
 import React, { Suspense, useRef } from 'react';
 import type { Location } from 'react-router-dom';
-import { generatePath, useLocation, useNavigate, useOutlet, useParams } from 'react-router-dom';
+import { generatePath, useLocation, useNavigate, useOutlet } from 'react-router-dom';
 
 import RightContent from '@/components/PageContainer/RightContent';
 import PageLoading from '@/components/PageLoading';
-import { DynamicRouteType } from '@/config/routes';
+import { DynamicRouteMenu } from '@/config/routes';
+import { getPageQuery } from '@/utils/route-utils';
 
 import styles from './index.less';
 
-interface TabObjectType extends DynamicRouteType {
+type TabObjectType = {
   key: string;
   location: Location;
   page: React.ReactElement | null;
   params: Record<string, any>;
-}
+} & DynamicRouteMenu;
 
 const { TabPane } = Tabs;
 
@@ -41,13 +42,14 @@ const genKey = memoized(
 const getTabMapKey = memoized((key: string) => key.substring(key.indexOf(',') + 1, key.length));
 
 interface Props {
-  routeConfig: DynamicRouteType;
   matchPath: string;
+  defaultTab: DynamicRouteMenu;
+  routeConfig: DynamicRouteMenu;
 }
 
-const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
+const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
   const ele = useOutlet();
-  const params = useParams();
+  const params = getPageQuery();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,7 +58,20 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
   // tablist 结构为 key:matchPath,value:tabObject ;
   // key == location.pathname
   // tabObject中记录当下location。
-  const tabList = useRef<Map<string, TabObjectType>>(new Map());
+  const tabList = useRef<Map<string, TabObjectType>>(
+    new Map([
+      [
+        '/',
+        {
+          ...defaultTab,
+          params: {},
+          page: defaultTab.element,
+          key: genKey('/', {}, location.search, ''),
+          location: { pathname: '/', search: '', hash: '', state: null, key: 'default' }
+        } as TabObjectType
+      ]
+    ])
+  );
 
   // 确保tab
   /*
@@ -70,7 +85,7 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
       location,
       page: ele,
       name: routeConfig.name,
-      key: genKey(matchPath, params, location.search)
+      key: genKey(matchPath, params, location.hash)
     };
     if (tab) {
       // 处理微前端情况，如发生路径修改则替换
@@ -118,12 +133,12 @@ const TabRoute: React.FC<Props> = ({ routeConfig, matchPath }) => {
       type='editable-card'
       className={styles.tabs}
       tabBarExtraContent={operations}
-      activeKey={routeConfig.path}
       onChange={(key) => selectTab(key)}
       tabBarStyle={{ background: '#fff' }}
-      onEdit={(targetKey) => closeTab(targetKey)}>
+      onEdit={(targetKey) => closeTab(targetKey)}
+      activeKey={genKey(matchPath, params, location.hash)}>
       {[...tabList.current.values()].map((item) => (
-        <TabPane tab={i18n._(item.name)} key={routeConfig.path}>
+        <TabPane tab={i18n._(item.name)} key={item.key} closable={item.fullPath !== '/'}>
           <Suspense fallback={<PageLoading />}>{item.page}</Suspense>
         </TabPane>
       ))}
