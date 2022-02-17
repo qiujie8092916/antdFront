@@ -1,6 +1,5 @@
 import ProLayout from '@ant-design/pro-layout';
-import defaultSettings from '@ant-design/pro-layout/es/defaultSettings';
-import { useCreation } from 'ahooks';
+import { useCreation, useMount, useUnmount } from 'ahooks';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
 import React from 'react';
@@ -11,6 +10,7 @@ import logo from '@/assets/logo.svg';
 import { curLangAtom } from '@/atoms/locale';
 import { dynamicRouteAtom } from '@/atoms/route';
 import TabRoute from '@/components/TabRoute';
+import proSettings from '@/config/defaultSettings';
 import { DynamicRouteType } from '@/config/routes';
 import { translateNameProperty } from '@/utils/route-utils';
 
@@ -53,6 +53,13 @@ const BasicLayout: React.FC = () => {
   //   console.timeEnd('feedToProlayoutRoute');
   //   return a;
   // }, [curLang]);
+  useMount(() => {
+    console.log('BasicLayout useMount');
+  });
+
+  useUnmount(() => {
+    console.log('BasicLayout useUnmount');
+  });
 
   const { routeConfig, matchPath } = pickRoutes(route, location.pathname);
 
@@ -91,7 +98,7 @@ const BasicLayout: React.FC = () => {
           </div>
         )}
         {...{
-          ...defaultSettings,
+          ...proSettings,
           fixSiderbar: true,
           fixedHeader: true
         }}>

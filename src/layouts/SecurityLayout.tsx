@@ -1,5 +1,5 @@
 import { PageLoading } from '@ant-design/pro-layout';
-import { useMount, useRequest } from 'ahooks';
+import { useMount, useRequest, useUnmount } from 'ahooks';
 import { parse, stringify } from 'querystring';
 import React, { useMemo, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
@@ -19,12 +19,17 @@ const SecurityLayout: React.FC<{ children?: any }> = () => {
   });
 
   useMount(() => {
+    console.log('SecurityLayout useMount');
     fetchCurrent()
       .then((res: CurrentUser) => {
         console.log('fetchCurrent', res);
         return setCurrentUser(res);
       })
       .finally(() => setIsReady(true));
+  });
+
+  useUnmount(() => {
+    console.log('SecurityLayout useUnmount');
   });
 
   // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）

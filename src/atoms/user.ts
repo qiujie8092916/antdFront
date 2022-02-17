@@ -6,17 +6,17 @@ export interface Member {
   id: string;
 }
 export interface CurrentUser {
-  avatar?: string;
+  id?: string;
   name?: string;
   title?: string;
+  avatar?: string;
   group?: Member[];
   signature?: string;
+  unreadCount?: number;
   tags?: {
     key: string;
     label: string;
   }[];
-  id?: string;
-  unreadCount?: number;
   [p: string]: any;
 }
 

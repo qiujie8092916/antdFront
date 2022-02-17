@@ -19,7 +19,7 @@ const Locale: React.FC<{ children: any }> = ({ children }) => {
     /** 初始化多语言：加载复数、加载翻译 */
     Object.keys(locales).forEach(async (lang) => {
       const locale = locales[lang];
-      const { messages } = await import(`@/locales/${lang}.js`);
+      const { default: messages } = await import(`@/locales/${lang}.js`);
 
       i18n.loadLocaleData(lang, { plurals: locale.plural });
       i18n.load(lang, messages);

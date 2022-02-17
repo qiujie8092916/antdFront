@@ -409,7 +409,7 @@ module.exports = function () {
       strictExportPresence: true,
       rules: [
         // Disable require.ensure as it's not a standard language feature.
-        { parser: { requireEnsure: false } },
+        // { parser: { requireEnsure: false } },
         // resolve : https://github.com/webpack/webpack/issues/11467 ^5.0.0-bata.30
         // {
         //   oneOf: [
