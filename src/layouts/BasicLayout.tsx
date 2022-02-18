@@ -1,9 +1,9 @@
 import ProLayout from '@ant-design/pro-layout';
-import { useCreation } from 'ahooks';
+import { useCreation, useWhyDidYouUpdate } from 'ahooks';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
 import React, { useMemo } from 'react';
-import { matchRoutes, useLocation, useNavigate } from 'react-router-dom';
+import { matchRoutes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import logo from '@/assets/logo.svg';
@@ -16,6 +16,11 @@ import { DynamicRouteMenu } from '@/config/routes';
 import { translateNameProperty } from '@/utils/route-utils';
 
 import styles from './BasicLayout.less';
+
+export const INDEX_CONSTANT = '/index';
+
+export const isIndex = (pathname: string) =>
+  ['/', '/index', '/dashboard/workplace'].includes(pathname);
 
 // 从 config 里 把 匹配的信息 调出来
 // 放这因为 activekey 在 prolayout 和 tabroute 之间共享。
@@ -41,9 +46,27 @@ const BasicLayout: React.FC = () => {
     [location.pathname]
   );
 
-  const { routeConfig: defaultConfig } = useMemo(() => pickRoutes(route, '/'), ['/']);
+  const { routeConfig: defaultConfig } = useMemo(
+    () => pickRoutes(route, INDEX_CONSTANT),
+    [INDEX_CONSTANT]
+  );
 
   console.log('route', route);
+
+  useWhyDidYouUpdate('BasicLayout', {
+    location,
+    navigate,
+    curLang,
+    dynamicRoute,
+    route,
+    routeConfig,
+    matchPath,
+    defaultConfig
+  });
+
+  if (isIndex(location.pathname) && location.pathname !== INDEX_CONSTANT) {
+    return <Navigate to={INDEX_CONSTANT} replace />;
+  }
 
   return (
     <div className={styles.prolayout} key='prolayout'>
@@ -51,7 +74,7 @@ const BasicLayout: React.FC = () => {
         headerRender={false}
         style={{ height: '100vh' }}
         contentStyle={{ margin: 0 }}
-        menuDataRender={() => route}
+        menuDataRender={() => route.filter((r) => !r.index)}
         menuProps={{
           mode: 'vertical',
           selectedKeys: [matchPath]
@@ -67,7 +90,7 @@ const BasicLayout: React.FC = () => {
           </div>
         )}
         menuHeaderRender={() => (
-          <div id='customize_menu_header' className={styles.logo} onClick={() => navigate('/')}>
+          <div className={styles.logo} onClick={() => navigate(INDEX_CONSTANT)}>
             <img alt='logo' src={logo} />
             <h1>
               <img alt='logo-text' src={logoText} />

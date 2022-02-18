@@ -10,6 +10,7 @@ import { generatePath, useLocation, useNavigate, useOutlet } from 'react-router-
 import RightContent from '@/components/PageContainer/RightContent';
 import PageLoading from '@/components/PageLoading';
 import { DynamicRouteMenu } from '@/config/routes';
+import { INDEX_CONSTANT, isIndex } from '@/layouts/BasicLayout';
 import { getPageQuery } from '@/utils/route-utils';
 
 import styles from './index.less';
@@ -61,13 +62,13 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
   const tabList = useRef<Map<string, TabObjectType>>(
     new Map([
       [
-        '/',
+        INDEX_CONSTANT,
         {
           ...defaultTab,
           params: {},
           page: defaultTab.element,
-          key: genKey('/', {}, location.search, ''),
-          location: { pathname: '/', search: '', hash: '', state: null, key: 'default' }
+          key: genKey(INDEX_CONSTANT, {}, location.search, ''),
+          location: { pathname: INDEX_CONSTANT, search: '', hash: '', state: null, key: 'default' }
         } as TabObjectType
       ]
     ])
@@ -78,7 +79,14 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
    * const updateTabList =
    */
   useCreation(() => {
-    const tab = tabList.current.get(matchPath);
+    let tab;
+
+    if (isIndex(matchPath)) {
+      tab = tabList.current.get(INDEX_CONSTANT);
+    } else {
+      tab = tabList.current.get(matchPath);
+    }
+
     const newTab: TabObjectType = {
       ...routeConfig,
       params,
@@ -91,7 +99,7 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
       // 处理微前端情况，如发生路径修改则替换
       // 还要比较参数
       // 微端路由更新 如果key不更新的话。会导致页面丢失..
-      if (tab.location.pathname !== location.pathname) {
+      if (!isIndex(matchPath) && tab.location.pathname !== location.pathname) {
         tabList.current.set(matchPath, newTab);
       }
     } else {
@@ -110,12 +118,10 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
     }
   });
 
-  const selectTab = useMemoizedFn((selectKey) => {
-    // 记录原真实路由,微前端可能修改
-    navigate(getTabPath(tabList.current.get(getTabMapKey(selectKey))!), {
-      replace: true
-    });
-  });
+  // 记录原真实路由,微前端可能修改
+  const selectTab = useMemoizedFn((selectKey) =>
+    navigate(getTabPath(tabList.current.get(getTabMapKey(selectKey))!))
+  );
 
   const operations = React.useMemo(
     () => ({
@@ -138,7 +144,7 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
       onEdit={(targetKey) => closeTab(targetKey)}
       activeKey={genKey(matchPath, params, location.hash)}>
       {[...tabList.current.values()].map((item) => (
-        <TabPane tab={i18n._(item.name)} key={item.key} closable={item.fullPath !== '/'}>
+        <TabPane tab={i18n._(item.name)} key={item.key} closable={item.fullPath !== INDEX_CONSTANT}>
           <Suspense fallback={<PageLoading />}>{item.page}</Suspense>
         </TabPane>
       ))}

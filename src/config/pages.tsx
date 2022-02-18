@@ -13,6 +13,7 @@ const MicroApp = lazy(() => import('@/components/MicroApp'));
 const UserLayout = lazy(() => import('@/layouts/UserLayout'));
 const BasicLayout = lazy(() => import('@/layouts/BasicLayout'));
 const SecurityLayout = lazy(() => import('@/layouts/SecurityLayout'));
+const Test1 = lazy(() => import('@/pages/test1'));
 
 const pages: Map<string, React.ReactElement> = new Map([
   ['Default', <Outlet />], // default microapp
@@ -20,7 +21,8 @@ const pages: Map<string, React.ReactElement> = new Map([
   ['UserLogin', <UserLogin />],
   ['UserLayout', <UserLayout />],
   ['BasicLayout', <BasicLayout />],
-  ['SecurityLayout', <SecurityLayout />]
+  ['SecurityLayout', <SecurityLayout />],
+  ['Test1', <Test1 />]
 ]);
 
 type GetPageProps = {

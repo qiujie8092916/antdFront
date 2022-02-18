@@ -13,6 +13,7 @@ const defaultAccess: Record<string, boolean> = {
   microOpen: true,
   test3Open: false,
   test4Open: true,
+  dashboardOpen: true,
   logionPermit: false
   // 'example': role === 'admin',
   // 'example2': some => some.prop === 'test'

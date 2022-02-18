@@ -58,6 +58,7 @@ function extractRouteConfig(rConfig: RouteType[]): {
 
   return {
     staticConf: copyConfig(rConfig),
+    // 过滤掉默认的动态路由
     dynamicConf: dynamicConf.length ? dynamicConf : null
   };
 }
@@ -283,9 +284,11 @@ const getSiderMenuList = (
   menus: AppRoute[] | null,
   entry: string,
   parentPath?: string
-): DynamicRouteType[] => {
+): DynamicRouteType[] | undefined => {
   // 根据扩展字段进行菜单排序处理
-  return [...(menus ?? [])]
+  if (!menus?.length) return undefined;
+
+  return [...menus]
     .sort((a, b) => {
       let { ext: aExt } = a;
       let { ext: bExt } = b;
