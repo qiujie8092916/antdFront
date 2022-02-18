@@ -142,8 +142,13 @@ function generateDynamicRoute(menuTabs: DynamicRouteType[], basePath: string) {
       icon: getIcon(conf.icon),
       fullPath: resPath.pathname,
       element: conf.element
-        ? getPage(conf.element, conf.access, resPath.pathname, conf.microApp)
-        : getPage('Default')
+        ? getPage({
+            access: conf.access,
+            pageStr: conf.element,
+            microApp: conf.microApp,
+            fullPath: resPath.pathname
+          })
+        : getPage({ pageStr: 'Default' })
     };
 
     if (conf.children) {
@@ -193,8 +198,14 @@ export function generateAllRoute(
         // 支持prolayout路由
         path: conf.path,
         element: conf.component
-          ? getPage(conf.component, false, resPath.pathname)
-          : getPage('Default')
+          ? getPage({
+              access: false,
+              pageStr: conf.component,
+              fullPath: resPath.pathname
+            })
+          : getPage({
+              pageStr: 'Default'
+            })
       };
 
       if (conf.children) {

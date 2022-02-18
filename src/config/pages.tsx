@@ -23,9 +23,16 @@ const pages: Map<string, React.ReactElement> = new Map([
   ['SecurityLayout', <SecurityLayout />]
 ]);
 
-const getPage = memoized((pageStr: string, access?: string, fullPath = '', microApp = '') => {
+type GetPageProps = {
+  pageStr: string;
+  access?: string;
+  fullPath?: string;
+  microApp?: string;
+};
+
+const getPage = memoized(({ pageStr, access, fullPath, microApp = '' }: GetPageProps) => {
   const page = isHttp(pageStr) ? (
-    <MicroApp entry={pageStr} fullPath={fullPath} appKey={microApp} />
+    <MicroApp entry={pageStr} appKey={microApp} fullPath={fullPath ?? ''} />
   ) : (
     pages.get(_.upperFirst(pageStr))
   );
