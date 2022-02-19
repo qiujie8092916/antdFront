@@ -56,6 +56,7 @@ const MicroApp: React.FC<Props> = ({ entry, appKey, fullPath }) => {
   });
 
   useUnmount(() => {
+    console.log('MicroApp unmount');
     if ((microApp.current as MicroApp4Qiankun)?.getStatus() === 'MOUNTED') {
       return (microApp.current as MicroApp4Qiankun)?.unmount();
     }

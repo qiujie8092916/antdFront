@@ -9,6 +9,25 @@
   </div>
 </template>
 
+<script>
+
+// @ is an alias to /src
+import HelloWorld from '@/components/HelloWorld.vue';
+
+export default {
+  name: 'app',
+  mounted() {
+    console.log('vue2 app mount');
+  },
+  destroyed() {
+    console.log('vue2 app destroyed');
+  },
+  deactivated() {
+    console.log('vue2 app deactivated');
+  },
+};
+</script>
+
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

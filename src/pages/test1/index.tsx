@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro';
+import { useMount, useUnmount } from 'ahooks';
 import { Button, Checkbox, Form, Input } from 'antd';
 import React from 'react';
 
@@ -13,6 +14,14 @@ const tailLayout = {
 };
 
 const LoginForm: React.FC = () => {
+  useMount(() => {
+    console.log('test1 mount');
+  });
+
+  useUnmount(() => {
+    console.log('test1 unmount');
+  });
+
   const onFinish = (values: any) => {
     console.log('Success:', values);
   };

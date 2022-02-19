@@ -34,6 +34,15 @@ export default {
       dialogVisible: false,
     };
   },
+  mounted() {
+    console.log('vue2 home mount');
+  },
+  destroyed() {
+    console.log('vue2 home destroyed');
+  },
+  deactivated() {
+    console.log('vue2 home deactivated');
+  },
   methods: {
     handleClose(done) {
       this.$confirm('Sure to close？')
