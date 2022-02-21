@@ -13,7 +13,9 @@ const SecurityLayout: React.FC<{ children?: any }> = () => {
   const [isReady, setIsReady] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useRecoilState<CurrentUser>(currentUserAtom);
 
-  const isLogin = useMemo(() => currentUser && currentUser.name, [currentUser]);
+  const isLogin = useMemo(() => {
+    return currentUser && currentUser.name;
+  }, [currentUser]);
 
   const { loading: fetchCurrentLoading, runAsync: fetchCurrent } = useRequest(queryCurrent, {
     manual: true
@@ -21,7 +23,9 @@ const SecurityLayout: React.FC<{ children?: any }> = () => {
 
   useMount(() => {
     fetchCurrent()
-      .then((res: CurrentUser) => setCurrentUser(res))
+      .then((res: CurrentUser) => {
+        return setCurrentUser(res);
+      })
       .finally(() => setIsReady(true));
   });
 

@@ -2,7 +2,7 @@ import ProLayout from '@ant-design/pro-layout';
 import { useCreation, useWhyDidYouUpdate } from 'ahooks';
 import _ from 'lodash';
 import memoized from 'nano-memoize';
-import React, { useMemo } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { matchRoutes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -10,6 +10,8 @@ import logo from '@/assets/logo.svg';
 import logoText from '@/assets/logo-text.svg';
 import { curLangAtom } from '@/atoms/locale';
 import { dynamicRouteAtom } from '@/atoms/route';
+import { tabMenusAtom } from '@/atoms/tabs';
+import PageLoading from '@/components/PageLoading';
 import TabRoute from '@/components/TabRoute';
 import proSettings from '@/config/defaultSettings';
 import { DynamicRouteMenu } from '@/config/routes';
@@ -39,6 +41,7 @@ const BasicLayout: React.FC = () => {
   const navigate = useNavigate();
   const curLang = useRecoilValue(curLangAtom);
   const dynamicRoute = useRecoilValue(dynamicRouteAtom);
+  const tabList = useRecoilValue(tabMenusAtom);
   const route = useCreation(() => translateNameProperty(dynamicRoute ?? []), [curLang]);
 
   const { routeConfig, matchPath } = useMemo(
@@ -67,7 +70,7 @@ const BasicLayout: React.FC = () => {
   if (isIndex(location.pathname) && location.pathname !== INDEX_CONSTANT) {
     return <Navigate to={INDEX_CONSTANT} replace />;
   }
-
+  console.log('Basiclayout tabList', tabList);
   return (
     <div className={styles.prolayout} key='prolayout'>
       <ProLayout
@@ -104,6 +107,17 @@ const BasicLayout: React.FC = () => {
         }}>
         {/* <PageContainer> */}
         <TabRoute routeConfig={routeConfig} matchPath={matchPath} defaultTab={defaultConfig} />
+        {tabList.map((item: any) => {
+          const { key, tabObject } = item;
+          return (
+            <div
+              data-name={tabObject.path}
+              key={`${tabObject.path}-${tabObject.timestamp || ''}`}
+              style={location.pathname === key ? { display: 'block' } : { display: 'none' }}>
+              <Suspense fallback={<PageLoading />}>{tabObject.page}</Suspense>
+            </div>
+          );
+        })}
         {/* </PageContainer> */}
       </ProLayout>
     </div>

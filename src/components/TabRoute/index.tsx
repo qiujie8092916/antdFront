@@ -1,14 +1,17 @@
 import { i18n } from '@lingui/core';
 import { useCreation, useMemoizedFn } from 'ahooks';
+import { useMount } from 'ahooks';
 import { Tabs } from 'antd';
-import _ from 'lodash';
+// import _ from 'lodash';
 import memoized from 'nano-memoize';
-import React, { Suspense, useRef } from 'react';
+import React /* , { Suspense,  useRef } */ from 'react';
 import type { Location } from 'react-router-dom';
 import { generatePath, useLocation, useNavigate, useOutlet } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
+import { tabMenusAtom } from '@/atoms/tabs';
 import RightContent from '@/components/PageContainer/RightContent';
-import PageLoading from '@/components/PageLoading';
+// import PageLoading from '@/components/PageLoading';
 import { DynamicRouteMenu } from '@/config/routes';
 import { INDEX_CONSTANT, isIndex } from '@/layouts/BasicLayout';
 import { getPageQuery } from '@/utils/route-utils';
@@ -48,44 +51,57 @@ interface Props {
   routeConfig: DynamicRouteMenu;
 }
 
+const getRouteIndex = (tabList: any[], key: string): any => {
+  return tabList.findIndex((tab) => tab.key === key);
+};
+
+const getRouteItem = (tabList: any[], key: string): any => {
+  return tabList.find((tab) => tab.key === key)?.tabObject;
+};
+
 const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
   const ele = useOutlet();
   const params = getPageQuery();
   const navigate = useNavigate();
   const location = useLocation();
+  const [tabList, setTabList] = useRecoilState(tabMenusAtom);
 
   // tabList 使用 ref ，避免二次render。
   // const [tabList, setTabList] = useSafeState([]);
   // tablist 结构为 key:matchPath,value:tabObject ;
   // key == location.pathname
   // tabObject中记录当下location。
-  const tabList = useRef<Map<string, TabObjectType>>(
-    new Map([
-      [
-        INDEX_CONSTANT,
-        {
+  // const tabList = useRef<Map<string, TabObjectType>>(
+  //
+  // );
+
+  useMount(() => {
+    setTabList([
+      {
+        key: INDEX_CONSTANT,
+        tabObject: {
           ...defaultTab,
           params: {},
           page: defaultTab.element,
           key: genKey(INDEX_CONSTANT, {}, location.search, ''),
-          location: { pathname: INDEX_CONSTANT, search: '', hash: '', state: null, key: 'default' }
+          location: {
+            pathname: INDEX_CONSTANT,
+            search: '',
+            hash: '',
+            state: null,
+            key: 'default'
+          }
         } as TabObjectType
-      ]
-    ])
-  );
+      }
+    ]);
+  });
 
   // 确保tab
   /*
    * const updateTabList =
    */
   useCreation(() => {
-    let tab;
-
-    if (isIndex(matchPath)) {
-      tab = tabList.current.get(INDEX_CONSTANT);
-    } else {
-      tab = tabList.current.get(matchPath);
-    }
+    const tab = getRouteItem(tabList, isIndex(matchPath) ? INDEX_CONSTANT : matchPath);
 
     const newTab: TabObjectType = {
       ...routeConfig,
@@ -100,27 +116,47 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
       // 还要比较参数
       // 微端路由更新 如果key不更新的话。会导致页面丢失..
       if (!isIndex(matchPath) && tab.location.pathname !== location.pathname) {
-        tabList.current.set(matchPath, newTab);
+        // tabList.set(matchPath, newTab);
+        setTabList((tl: any) => [
+          ...tl,
+          {
+            key: matchPath,
+            tabObject: newTab
+          }
+        ]);
       }
     } else {
-      tabList.current.set(matchPath, newTab);
+      // tabList.set(matchPath, newTab);
+      setTabList((tl: any) => [
+        ...tl,
+        {
+          key: matchPath,
+          tabObject: newTab
+        }
+      ]);
+      // setTabList((tl: any) => tl.set(matchPath, newTab));
     }
   }, [location]);
 
   const closeTab = useMemoizedFn((selectKey) => {
     // 记录原真实路由,微前端可能修改
-    if (tabList.current.size >= 2) {
-      tabList.current.delete(getTabMapKey(selectKey));
-      const nextKey = _.last(Array.from(tabList.current.keys()));
+    if (tabList.length >= 2) {
+      // delete tabList[getTabMapKey(selectKey)];
+      const index = getRouteIndex(tabList, getTabMapKey(selectKey));
+      if (index !== undefined) {
+        tabList.splice(index, 1);
+      }
+      const nextKey = tabList[tabList.length - 1].key; // _.last(Array.from(tabList.keys()));
       if (nextKey) {
-        navigate(getTabPath(tabList.current.get(nextKey)!), { replace: true });
+        navigate(getTabPath(getRouteItem(tabList, nextKey)!), { replace: true });
       }
     }
   });
 
   // 记录原真实路由,微前端可能修改
   const selectTab = useMemoizedFn((selectKey) =>
-    navigate(getTabPath(tabList.current.get(getTabMapKey(selectKey))!))
+    // navigate(getTabPath(tabList.get(getTabMapKey(selectKey))!))
+    navigate(getTabPath(getRouteItem(tabList, getTabMapKey(selectKey))!))
   );
 
   const operations = React.useMemo(
@@ -130,6 +166,7 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
     []
   );
 
+  console.log('TabRoute tabList', tabList);
   return (
     <Tabs
       hideAdd
@@ -143,9 +180,13 @@ const TabRoute: React.FC<Props> = ({ defaultTab, routeConfig, matchPath }) => {
       tabBarStyle={{ background: '#fff' }}
       onEdit={(targetKey) => closeTab(targetKey)}
       activeKey={genKey(matchPath, params, location.hash)}>
-      {[...tabList.current.values()].map((item) => (
-        <TabPane tab={i18n._(item.name)} key={item.key} closable={item.fullPath !== INDEX_CONSTANT}>
-          <Suspense fallback={<PageLoading />}>{item.page}</Suspense>
+      {/* {[...tabList.current.values()].map((item) => ( */}
+      {[...tabList].map((item) => (
+        <TabPane
+          tab={i18n._(item.tabObject.name)}
+          key={item.key}
+          closable={item.tabObject.fullPath !== INDEX_CONSTANT}>
+          {/* <Suspense fallback={<PageLoading />}>{item.page}</Suspense> */}
         </TabPane>
       ))}
     </Tabs>
